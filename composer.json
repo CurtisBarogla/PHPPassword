@@ -14,7 +14,7 @@
 	"autoload" : {
 		"psr-4" : {
 			"Zoe\\Component\\Password\\" : "./src",
-			"ZoeTest\\Component\\Password" : "./tests"
+			"ZoeTest\\Component\\Password\\" : "./tests"
 		},
 		"exclude-from-classmap" : [
 			"tests"
