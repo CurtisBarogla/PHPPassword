@@ -52,10 +52,10 @@ class MinMaxPasswordRule extends PasswordRule
     /**
      * Initialize rule
      * 
-     * @param string $errorMax
-     *   Error message when max characters count is reached
      * @param string $errorMin
-     *   Error message when min characters count is not reached
+     *   Error message when min characters count is not reached (use {:min:} to display min char required)
+     * @param string $errorMax
+     *   Error message when max characters count is reached (use {:max:} to display min char allowed)
      * @param int $min
      *   Min characters required (setted to 10 by default)
      * @param int $max
@@ -81,7 +81,9 @@ class MinMaxPasswordRule extends PasswordRule
         $length = (\extension_loaded("mbstring")) ? mb_strlen($password) : strlen($password);
         
         if(($tooShort = $length < $this->min) || $length > $this->max) {
-            $this->error = ($tooShort) ? $this->errorMin : $this->errorMax;
+            $this->error = ($tooShort) ? 
+                                $this->interpolate(["min"], [(string) $this->min], $this->errorMin) : 
+                                $this->interpolate(["max"], [(string) $this->max], $this->errorMax);
             
             return false;
         }

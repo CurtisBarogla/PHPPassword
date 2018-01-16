@@ -48,4 +48,26 @@ abstract class PasswordRule implements PasswordRuleInterface
         return $this->error;
     }
     
+    /**
+     * Interpolate value respecting {:tointerpolate:} pattern into a string
+     * 
+     * @param array $keys
+     *   Keys value to interpolate with
+     * @param array $by
+     *   Values to set
+     * @param string $into
+     *   String to interpolate
+     * 
+     * @return string
+     *   String interpolated
+     */
+    protected function interpolate(array $keys, array $by, string $into): string
+    {
+        $keys = \array_map(function(string $key): string {
+            return "{:{$key}:}";
+        }, $keys);
+        
+        return \str_replace($keys, $by, $into);
+    }
+    
 }

@@ -42,10 +42,10 @@ class MinMaxPasswordRuleTest extends TestCase
      */
     public function testComplyTooShort(): void
     {
-        $rule = new MinMaxPasswordRule("FooMin", "FooMax");
+        $rule = new MinMaxPasswordRule("FooMin {:min:}", "FooMax");
         
         $this->assertFalse($rule->comply("Foo"));
-        $this->assertSame("FooMin", $rule->getError());
+        $this->assertSame("FooMin 10", $rule->getError());
     }
     
     /**
@@ -54,10 +54,10 @@ class MinMaxPasswordRuleTest extends TestCase
      */
     public function testComplyTooLong(): void
     {
-        $rule = new MinMaxPasswordRule("FooMin", "FooMax", 0, 5);
+        $rule = new MinMaxPasswordRule("FooMin", "FooMax {:max:}", 0, 5);
         
         $this->assertFalse($rule->comply("FooBare"));
-        $this->assertSame("FooMax", $rule->getError());
+        $this->assertSame("FooMax 5", $rule->getError());
     }
     
 }

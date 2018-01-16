@@ -32,7 +32,7 @@ class CharRowLimitPasswordRule extends PasswordRule
      * Initialize rule
      * 
      * @param string $error
-     *   Error to display. ( use {:char:} ) to display repeated char
+     *   Error to display. ( use {:char:} to display repeated char and {:max:} to display max allowed chars in a row 
      * @param int $max
      *   Max same character allowed in a row (setted to 3 by default)
      */
@@ -62,7 +62,7 @@ class CharRowLimitPasswordRule extends PasswordRule
                 $current--;
             }
             if($found >= $this->max) {
-                $this->error = \str_replace("{:char:}", $password[$i], $this->error);
+                $this->error = $this->interpolate(["max", "char"], [(string) $this->max, $password[$i]], $this->error);
                 
                 return false;
             }
