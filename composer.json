@@ -29,5 +29,10 @@
 	"keywords" : [
 		"password"
 	],
-	"minimum-stability" : "stable"
+	"minimum-stability" : "stable",
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "2.0-dev"
+		}
+	}
 }
