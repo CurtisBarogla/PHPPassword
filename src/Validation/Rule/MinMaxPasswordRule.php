@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Validation\Rule;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Check if a password has a min/max count of characters
  * 
@@ -53,9 +55,9 @@ class MinMaxPasswordRule extends PasswordRule
      * Initialize rule
      * 
      * @param string $errorMin
-     *   Error message when min characters count is not reached (use {:min:} to display min char required)
+     *   Error message when min characters count is not reached (use {:min:} to display min chars required)
      * @param string $errorMax
-     *   Error message when max characters count is reached (use {:max:} to display min char allowed)
+     *   Error message when max characters count is reached (use {:max:} to display max chars allowed)
      * @param int $min
      *   Min characters required (setted to 10 by default)
      * @param int $max
@@ -66,6 +68,11 @@ class MinMaxPasswordRule extends PasswordRule
      */
     public function __construct(string $errorMin, string $errorMax, int $min = 10, int $max = 128, $countCallable = null)
     {
+        if($min >= $max)
+            throw new \LogicException(\sprintf("Min characters required cannot be greater or equal than max chars allowed. '%d' min given - '%d' max given",
+                $min,
+                $max));
+        
         $this->errorMin = $errorMin;
         $this->errorMax = $errorMax;
         $this->min = $min;
@@ -76,9 +83,9 @@ class MinMaxPasswordRule extends PasswordRule
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Validation\Rule\PasswordRuleInterface::comply()
      */
-    public function comply(string $password): bool
+    public function comply(Password $password): bool
     {
-        $length = (\extension_loaded("mbstring")) ? mb_strlen($password) : strlen($password);
+        $length = \count($password);
         
         if(($tooShort = $length < $this->min) || $length > $this->max) {
             $this->error = ($tooShort) ? 

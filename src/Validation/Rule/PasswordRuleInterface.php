@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Validation\Rule;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Process a password over a rule
  * 
@@ -24,13 +26,13 @@ interface PasswordRuleInterface
     /**
      * Comply a password over a rule
      * 
-     * @param string $password
+     * @param Password $password
      *   Password to check
      * 
      * @return bool
      *   True if the password is complying declared rule. False otherwise
      */
-    public function comply(string $password): bool;
+    public function comply(Password $password): bool;
     
     /**
      * Get error message if the password is not complying declared rule

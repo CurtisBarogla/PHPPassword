@@ -13,7 +13,8 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Validation\Rule;
 
 use PHPUnit\Framework\TestCase;
-use ZoeTest\Component\Password\Fixture\FooPasswordRule;
+use ZoeTest\Component\Password\Fixture\Validation\Rule\FooPasswordRule;
+use Zoe\Component\Password\Password;
 
 /**
  * PasswordRule testcase
@@ -33,7 +34,7 @@ class PasswordRuleTest extends TestCase
     {
         $rule = new FooPasswordRule("FooError");
         
-        $this->assertTrue($rule->comply("Foo"));
+        $this->assertTrue($rule->comply($this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock()));
     }
     
     /**

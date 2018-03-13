@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Validation\Rule;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Limit a character in a row for a password
  * 
@@ -46,9 +48,9 @@ class CharRowLimitPasswordRule extends PasswordRule
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Validation\Rule\PasswordRuleInterface::comply()
      */
-    public function comply(string $password): bool
+    public function comply(Password $password): bool
     {
-        $password = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
+        $password = $password->getExplodedPassword();
         $length = \count($password);
         
         for ($i = 0; $i < $length; $i++) {
