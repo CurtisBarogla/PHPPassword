@@ -12,9 +12,9 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Topology\Generator;
 
-use Zoe\Component\Password\Topology\Topology;
 use Zoe\Component\Password\Password;
-use Zoe\Component\Password\Exception\UnexpectedPasswordFormatException;
+use Zoe\Component\Password\Exception\UnexpectedMethodCallException;
+use Zoe\Component\Password\Topology\Topology;
 
 /**
  * Responsible to generate a formated topology pattern from a password.
@@ -36,8 +36,8 @@ interface PasswordTopologyGeneratorInterface
      * @return Topology
      *   Password topology
      *   
-     * @throws UnexpectedPasswordFormatException
-     *   If password cannot be formated for whatever reason. Should not be reached as support should be called before
+     * @throws UnexpectedMethodCallException
+     *   If support method has been not already called
      */
     public function format(Password $password): Topology;
     

@@ -13,12 +13,12 @@ declare(strict_types = 1);
 namespace Zoe\Component\Password\Exception;
 
 /**
- * When a password form is invalid over a topology generator
+ * When a method should not be called
  * 
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class UnexpectedPasswordFormatException extends \UnexpectedValueException
+class UnexpectedMethodCallException extends \UnexpectedValueException
 {
     //
 }
