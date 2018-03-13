@@ -13,9 +13,9 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Topology\Generator;
 
 use PHPUnit\Framework\TestCase;
-use Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator;
 use Zoe\Component\Password\Password;
-use Zoe\Component\Password\Exception\UnexpectedPasswordFormatException;
+use Zoe\Component\Password\Exception\UnexpectedMethodCallException;
+use Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator;
 
 /**
  * NativePasswordTopologyGenerator testcase
@@ -29,28 +29,48 @@ class NativePasswordTopologyGeneratorTest extends TestCase
 {
  
     /**
-     * Should be updated if get*CharacterRanges methods are updated
-     * 
      * @see \Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator::format()
-     * @see \Zoe\Component\Password\Topology\Generator\AbstractPasswordTopologyGenerator::format()
      */
-    public function testFormat(): void
+    public function testFormatWhenConstructorParamRangesIsNull(): void
     {
         $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
         $password->expects($this->once())->method("getExplodedPassword")->will($this->returnValue(["F", "o", "@", "0"]));
         
         $generator = new NativePasswordTopologyGenerator();
+        $generator->support($password);
         
         $topology = $generator->format($password);
+        
         $this->assertSame("ulsd", $topology->getTopology());
         $this->assertSame($generator->getIdentifier(), $topology->generatedBy());
     }
     
     /**
-     * Should be updated if get*CharacterRanges methods are updated
-     * 
+     * @see \Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator::format()
+     */
+    public function testFormatWhenConstructorParamRangesIsGiven(): void
+    {
+        $topologyRanges = [
+            "f"     =>  ["A-C"],
+            "p"     =>  ["D-V"],
+            "l"     =>  ["W-Z"],
+            "n"     =>  ["a-z"]
+        ];
+        
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getExplodedPassword")->will($this->returnValue(["B", "R", "T", "X", "z", "r", "t"]));
+        
+        $generator = new NativePasswordTopologyGenerator($topologyRanges);
+        $generator->support($password);
+        
+        $topology = $generator->format($password);
+        
+        $this->assertSame("fpplnnn", $topology->getTopology());
+        $this->assertSame($generator->getIdentifier(), $topology->generatedBy());
+    }
+    
+    /**
      * @see \Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator::support()
-     * @see \Zoe\Component\Password\Topology\Generator\AbstractPasswordTopologyGenerator::support()
      */
     public function testSupport(): void
     {
@@ -82,19 +102,14 @@ class NativePasswordTopologyGeneratorTest extends TestCase
                     /**_____EXCEPTIONS_____**/
     
     /**
-     * Should be updated if get*CharacterRanges methods are updated
-     * 
      * @see \Zoe\Component\Password\Topology\Generator\NativePasswordTopologyGenerator::format()
-     * @see \Zoe\Component\Password\Topology\Generator\AbstractPasswordTopologyGenerator::format()
      */
-    public function testExceptionFormatWhenInvalidPasswordIsGiven(): void
+    public function testExceptionFormatWhenSupportMethodIsNotCalled(): void
     {
-        $this->expectException(UnexpectedPasswordFormatException::class);
-        $this->expectExceptionMessage("This character 'é' is not handled by password topology generator 'NativePasswordTopologyGenerator");
+        $this->expectException(UnexpectedMethodCallException::class);
+        $this->expectExceptionMessage("Password topology cannot be generated if support method has not been called yet over 'NativePasswordTopologyGenerator' topology generator");
         
         $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
-        // should be updated if given char is handled by generator
-        $password->expects($this->once())->method("getExplodedPassword")->will($this->returnValue(["f", "é"]));
         
         $generator = new NativePasswordTopologyGenerator();
         $generator->format($password);
