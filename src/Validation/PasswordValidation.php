@@ -13,6 +13,7 @@ declare(strict_types = 1);
 namespace Zoe\Component\Password\Validation;
 
 use Zoe\Component\Password\Validation\Rule\PasswordRuleInterface;
+use Zoe\Component\Password\Password;
 
 /**
  * This implementation validate a password over PasswordRule
@@ -52,7 +53,7 @@ class PasswordValidation implements PasswordValidationInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Validation\PasswordValidationInterface::comply()
      */
-    public function comply(string $password): bool
+    public function comply(Password $password): bool
     {
         if(null === $this->rules)
             return true;

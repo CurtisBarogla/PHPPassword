@@ -15,6 +15,7 @@ namespace ZoeTest\Component\Password\Validation;
 use PHPUnit\Framework\TestCase;
 use Zoe\Component\Password\Validation\Rule\PasswordRuleInterface;
 use Zoe\Component\Password\Validation\PasswordValidation;
+use Zoe\Component\Password\Password;
 
 /**
  * PasswordValidation testcase
@@ -47,10 +48,10 @@ class PasswordValidationTest extends TestCase
     {
         // no rule defined
         $validation = new PasswordValidation();
-        $this->assertTrue($validation->comply("Foo"));
+        $this->assertTrue($validation->comply($this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock()));
         
         // rules defined
-        $password = "Foo";
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
         $ruleFoo = $this->getMockBuilder(PasswordRuleInterface::class)->getMock();
         $ruleFoo->expects($this->once())->method("comply")->with($password)->will($this->returnValue(true));
         $ruleBar = $this->getMockBuilder(PasswordRuleInterface::class)->getMock();
@@ -60,7 +61,7 @@ class PasswordValidationTest extends TestCase
         $validation->addRule($ruleFoo);
         $validation->addRule($ruleBar);
         
-        $this->assertTrue($validation->comply("Foo"));
+        $this->assertTrue($validation->comply($this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock()));
         $this->assertNull($validation->getErrors());
     }
     
@@ -70,7 +71,7 @@ class PasswordValidationTest extends TestCase
      */
     public function testComplyWithErrors(): void
     {
-        $password = "Foo";
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
         $ruleFoo = $this->getMockBuilder(PasswordRuleInterface::class)->getMock();
         $ruleFoo->expects($this->once())->method("comply")->with($password)->will($this->returnValue(true));
         $ruleBar = $this->getMockBuilder(PasswordRuleInterface::class)->getMock();
@@ -85,7 +86,7 @@ class PasswordValidationTest extends TestCase
         $validation->addRule($ruleBar);
         $validation->addRule($ruleMoz);
         
-        $this->assertFalse($validation->comply("Foo"));
+        $this->assertFalse($validation->comply($this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock()));
         $this->assertSame(["BarErrorMessage", "MozErrorMessage"], $validation->getErrors());
     }
     
