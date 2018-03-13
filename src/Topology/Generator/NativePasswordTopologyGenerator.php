@@ -49,6 +49,13 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
      */
     private $supported = false;
     
+    /**
+     * Personnalize generator identifier if ranges are modified 
+     * 
+     * @var string
+     */
+    private $identifier;
+    
     /** 
      * Defaults character ranges defined by OWASP
      * 
@@ -72,12 +79,15 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
      * @param array[][]|null $ranges
      *   Accepted ranges. Indexed by replacement char for topology generation.
      *   If setted to null, will set OWASP rules password guidelines
+     * @param string $identifier
+     *   Password topology generator identifier
      *   
      * @see https://www.owasp.org/index.php/Authentication_Cheat_Sheet#Password_Complexity
      */
-    public function __construct(?array $ranges = null)
+    public function __construct(?array $ranges = null, $identifier = "NativePasswordTopologyGenerator")
     {
         $this->initializeCharacterRanges($ranges ?? self::DEFAULTS_RANGES);
+        $this->identifier = $identifier;
     }
     
     /**
@@ -121,7 +131,7 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
      */
     public function getIdentifier(): string
     {
-        return "NativePasswordTopologyGenerator";
+        return $this->identifier;
     }
     
     /**
