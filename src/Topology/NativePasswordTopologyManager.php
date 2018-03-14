@@ -71,7 +71,7 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Topology\PasswordTopologyManagerInterface::isSecure()
      */
-    public function isSecure(Topology $passwordTopology): bool
+    public function isSecure(PasswordTopology $passwordTopology): bool
     {
         $topologies = $this->loader->load($this->limit);
         
@@ -90,7 +90,7 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Topology\PasswordTopologyManagerInterface::generate()
      */
-    public function generate(Password $password): Topology
+    public function generate(Password $password): PasswordTopology
     {
         if(!$this->generator->support($password))
             throw new UnexceptedPasswordFormatException(\sprintf("Cannot generate a topology over given password with setted topology generator '%s'",

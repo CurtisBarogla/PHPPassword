@@ -14,7 +14,7 @@ namespace Zoe\Component\Password\Topology\Generator;
 
 use Zoe\Component\Password\Password;
 use Zoe\Component\Password\Exception\UnexpectedMethodCallException;
-use Zoe\Component\Password\Topology\Topology;
+use Zoe\Component\Password\Topology\PasswordTopology;
 
 /**
  * Native password topology generator.
@@ -94,7 +94,7 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Topology\Generator\PasswordTopologyGeneratorInterface::format()
      */
-    public function format(Password $password): Topology
+    public function format(Password $password): PasswordTopology
     {
         if(!$this->supported)
             throw new UnexpectedMethodCallException(\sprintf("Password topology cannot be generated if support method has not been called yet over '%s' topology generator",
@@ -111,7 +111,7 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
             }            
         }
             
-        return new Topology($topology, $this->getIdentifier());
+        return new PasswordTopology($topology, $this->getIdentifier());
     }
     
     /**

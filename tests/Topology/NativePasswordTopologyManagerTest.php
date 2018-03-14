@@ -13,13 +13,13 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Topology;
 
 use PHPUnit\Framework\TestCase;
-use Zoe\Component\Password\Password;
-use Zoe\Component\Password\Topology\Generator\PasswordTopologyGeneratorInterface;
-use Zoe\Component\Password\Topology\Topology;
-use Zoe\Component\Password\Topology\NativePasswordTopologyManager;
-use Zoe\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
-use Zoe\Component\Password\Exception\UnexceptedPasswordFormatException;
 use ZoeTest\Component\Password\Common\TopologyShortcut;
+use Zoe\Component\Password\Password;
+use Zoe\Component\Password\Exception\UnexceptedPasswordFormatException;
+use Zoe\Component\Password\Topology\NativePasswordTopologyManager;
+use Zoe\Component\Password\Topology\PasswordTopology;
+use Zoe\Component\Password\Topology\Generator\PasswordTopologyGeneratorInterface;
+use Zoe\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 
 /**
  * NativePasswordTopologyManager testcase
@@ -53,7 +53,7 @@ class NativePasswordTopologyManagerTest extends TestCase
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(Topology::class)->disableOriginalConstructor()->getMock();
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
         $topology->expects($this->exactly(6))->method("generatedBy")->will($this->returnValue("FooGenerator"));
         $topology->expects($this->exactly(4))->method("getTopology")->will($this->returnValue("aaa"));
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
@@ -84,7 +84,7 @@ class NativePasswordTopologyManagerTest extends TestCase
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(Topology::class)->disableOriginalConstructor()->getMock();
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
         $topology->expects($this->exactly(6))->method("generatedBy")->will($this->returnValue("NotRegisteredLoader"));
         $topology->expects($this->never())->method("getTopology");
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
@@ -115,7 +115,7 @@ class NativePasswordTopologyManagerTest extends TestCase
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(Topology::class)->disableOriginalConstructor()->getMock();
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
         $topology->expects($this->exactly(3))->method("generatedBy")->will($this->returnValue("FooGenerator"));
         $topology->expects($this->exactly(3))->method("getTopology")->will($this->returnValue("ppp"));
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
@@ -130,7 +130,7 @@ class NativePasswordTopologyManagerTest extends TestCase
      */
     public function testGenerate(): void
     {
-        $topologyReturned = $this->getMockBuilder(Topology::class)->disableOriginalConstructor()->getMock();
+        $topologyReturned = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
         $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
         $generator->expects($this->once())->method("support")->with($password)->will($this->returnValue(true));

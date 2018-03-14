@@ -13,7 +13,7 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Topology;
 
 use PHPUnit\Framework\TestCase;
-use Zoe\Component\Password\Topology\Topology;
+use Zoe\Component\Password\Topology\PasswordTopology;
 
 /**
  * Topology testcase
@@ -27,21 +27,21 @@ class TopologyTest extends TestCase
 {
     
     /**
-     * @see \Zoe\Component\Password\Topology\Topology::getTopology()
+     * @see \Zoe\Component\Password\Topology\PasswordTopology::getTopology()
      */
     public function testGetTopology(): void
     {
-        $topology = new Topology("Foo", "Bar");
+        $topology = new PasswordTopology("Foo", "Bar");
         
         $this->assertSame("Foo", $topology->getTopology());
     }
     
     /**
-     * @see \Zoe\Component\Password\Topology\Topology::generatedBy()
+     * @see \Zoe\Component\Password\Topology\PasswordTopology::generatedBy()
      */
     public function testGeneratedBy(): void
     {
-        $topology = new Topology("Foo", "Bar");
+        $topology = new PasswordTopology("Foo", "Bar");
         
         $this->assertSame("Bar", $topology->generatedBy());
     }

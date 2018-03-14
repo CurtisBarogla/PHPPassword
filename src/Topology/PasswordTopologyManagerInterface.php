@@ -27,13 +27,13 @@ interface PasswordTopologyManagerInterface
     /**
      * Check if a topology (from password) is considered secure
      * 
-     * @param Topology $passwordTopology
+     * @param PasswordTopology $passwordTopology
      *   Topology to check
      * 
      * @return bool
      *   True if the password is considered secure. False otherwise
      */
-    public function isSecure(Topology $passwordTopology): bool;
+    public function isSecure(PasswordTopology $passwordTopology): bool;
     
     /**
      * Generate a topology over a password
@@ -41,12 +41,12 @@ interface PasswordTopologyManagerInterface
      * @param Password $password
      *   Password which topology must be generated
      * 
-     * @return Topology
+     * @return PasswordTopology
      *   Password topology
      *   
      * @throws UnexceptedPasswordFormatException
      *   When topology cannot be generated for whatever reason
      */
-    public function generate(Password $password): Topology;
+    public function generate(Password $password): PasswordTopology;
     
 }

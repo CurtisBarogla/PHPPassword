@@ -14,7 +14,7 @@ namespace ZoeTest\Component\Password\Common;
 
 
 use PHPUnit\Framework\TestCase;
-use Zoe\Component\Password\Topology\Topology;
+use Zoe\Component\Password\Topology\PasswordTopology;
 
 /**
  * Shortcuts for generating helper when testing topologies
@@ -42,7 +42,7 @@ class TopologyShortcut
         $topologies = [];
         foreach ($map as $generatorName => $passwordTopologies) {
             foreach ($passwordTopologies as $topology) {
-                $mock = $case->getMockBuilder(Topology::class)->disableOriginalConstructor()->getMock();
+                $mock = $case->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
                 $mock->expects($case->any())->method("generatedBy")->will($case->returnValue($generatorName));
                 $mock->expects($case->any())->method("getTopology")->will($case->returnValue($topology));
                 $topologies[] = $mock;
