@@ -56,7 +56,7 @@ interface PasswordTopologyManagerInterface
      *   Password topology generator identifier
      * 
      * @return PasswordTopology[]
-     *   Asset of restricted password topologies
+     *   A set of restricted password topologies
      */
     public function getRestrictedPasswordTopologies(string $generatorIdentifier): array;
     
