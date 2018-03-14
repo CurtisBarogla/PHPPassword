@@ -23,7 +23,7 @@ use Zoe\Component\Password\Topology\PasswordTopology;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class TopologyTest extends TestCase
+class PasswordTopologyTest extends TestCase
 {
     
     /**
