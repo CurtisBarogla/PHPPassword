@@ -29,7 +29,7 @@ class Topology
     private $topology;
     
     /**
-     * Password generator identifier
+     * Identifier to check how topology has been formated
      * 
      * @var string
      */
@@ -41,7 +41,7 @@ class Topology
      * @param string $topology
      *   Password topology from a password
      * @param string $generator
-     *   Generator identifier used for generating the topology
+     *   Identifier used for generating the topology
      */
     public function __construct(string $topology, string $generator)
     {
@@ -61,10 +61,10 @@ class Topology
     }
     
     /**
-     * Get generator identifier used for generating the password topology
+     * Get identifier used for generating the password topology
      * 
      * @return string
-     *   Password topology generator name
+     *   Password topology formater identifier name
      */
     public function generatedBy(): string
     {
