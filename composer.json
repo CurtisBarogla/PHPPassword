@@ -27,7 +27,9 @@
 		"barogla/internal" : "dev-master"
 	},
 	"keywords" : [
-		"password"
+		"password",
+		"topology",
+		"security"
 	],
 	"minimum-stability" : "stable",
 	"extra" : {
