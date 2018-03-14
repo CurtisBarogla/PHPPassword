@@ -12,7 +12,7 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Topology\Loader;
 
-use Zoe\Component\Password\Topology\Topology;
+use Zoe\Component\Password\Topology\PasswordTopology;
 
 /**
  * Responsible to load a set of password topologies 
@@ -24,15 +24,17 @@ interface PasswordTopologyLoaderInterface
 {
     
     /**
-     * Load a set of most used password topologies from externals sources.
+     * Load a set of most used password topologies from externals sources by generator identifier.
      * Basically, topologies loaded here will be used to refute password which topology has been generated 
      * 
+     * @param string $generatorIdentifier
+     *   Generator identifier which topologies was generated loadable
      * @param int $limit
      *   Number of topologies to load
      * 
-     * @return Topology[]
+     * @return PasswordTopology[]
      *   A set of password topologies
      */
-    public function load(int $limit): array;
+    public function load(string $generatorIdentifier, int $limit): array;
     
 }
