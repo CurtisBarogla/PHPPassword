@@ -18,7 +18,7 @@ namespace Zoe\Component\Password\Topology;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class Topology
+class PasswordTopology
 {
     
     /**
