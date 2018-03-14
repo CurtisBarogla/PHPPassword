@@ -18,7 +18,7 @@ namespace Zoe\Component\Password\Hash;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class NullPasswordHash implements PasswordHashInterface
+class PlainTextPasswordHash implements PasswordHashInterface
 {
     
     /**

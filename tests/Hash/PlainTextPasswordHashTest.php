@@ -13,7 +13,7 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Hash;
 
 use PHPUnit\Framework\TestCase;
-use Zoe\Component\Password\Hash\NullPasswordHash;
+use Zoe\Component\Password\Hash\PlainTextPasswordHash;
 
 /**
  * NullPasswordHash testcase
@@ -23,25 +23,25 @@ use Zoe\Component\Password\Hash\NullPasswordHash;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class NullPasswordHashTest extends TestCase
+class PlainTextPasswordHashTest extends TestCase
 {
     
     /**
-     * @see \Zoe\Component\Password\Hash\NullPasswordHash::hash()
+     * @see \Zoe\Component\Password\Hash\PlainTextPasswordHash::hash()
      */
     public function testHash(): void
     {
-        $hash = new NullPasswordHash();
+        $hash = new PlainTextPasswordHash();
         
         $this->assertSame("Foo", $hash->hash("Foo"));
     }
     
     /**
-     * @see \Zoe\Component\Password\Hash\NullPasswordHash::isValid()
+     * @see \Zoe\Component\Password\Hash\PlainTextPasswordHash::isValid()
      */
     public function testIsValid(): void
     {
-        $hash = new NullPasswordHash();
+        $hash = new PlainTextPasswordHash();
         
         $hashed = $hash->hash("Foo");
         
@@ -50,11 +50,11 @@ class NullPasswordHashTest extends TestCase
     }
     
     /**
-     * @see \Zoe\Component\Password\Hash\NullPasswordHash::needsRehash()
+     * @see \Zoe\Component\Password\Hash\PlainTextPasswordHash::needsRehash()
      */
     public function testNeedsRehash(): void
     {
-        $hash = new NullPasswordHash();
+        $hash = new PlainTextPasswordHash();
         
         $this->assertFalse($hash->needsRehash("Foo"));
     }
