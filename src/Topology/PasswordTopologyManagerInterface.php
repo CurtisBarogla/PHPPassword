@@ -60,4 +60,12 @@ interface PasswordTopologyManagerInterface
      */
     public function getRestrictedPasswordTopologies(string $generatorIdentifier): array;
     
+    /**
+     * Define a limit amount of password topologies to restrict
+     *
+     * @param int $limit
+     *   Limit of password topologies restricted
+     */
+    public function setLimit(int $limit): void;
+    
 }

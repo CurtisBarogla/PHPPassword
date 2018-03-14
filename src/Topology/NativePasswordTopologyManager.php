@@ -43,7 +43,7 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
     /**
      * Limit of topologie to load
      * 
-     * @var int
+     * @var int|null
      */
     private $limit;
     
@@ -67,11 +67,13 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
     public function __construct(
         PasswordTopologyGeneratorInterface $generator, 
         PasswordTopologyLoaderInterface $loader,
-        int $limit)
+        ?int $limit = null)
     {
         $this->generator = $generator;
         $this->loader = $loader;
-        $this->limit = $limit;
+        
+        if(null !== $limit)
+            $this->setLimit($limit);
     }
     
     /**
@@ -118,6 +120,17 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
     }
     
     /**
+     * Override limit parameter
+     * 
+     * @param int $limit
+     *   Limit of password topologies restricted
+     */
+    public function setLimit(int $limit): void
+    {
+        $this->limit = $limit;
+    }
+    
+    /**
      * Initialize locale property for restricted password topologies
      * 
      * @param string $generatorIdentifier
@@ -125,6 +138,9 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      */
     private function initializeRestrictedPasswordTopologies(string $generatorIdentifier): void
     {
+        if(null === $this->limit)
+            throw new \LogicException("Cannot initialize a set of restricted password topologies as no limit has been defined");
+        
         if(null !== $this->restrictedTopologies)
             return;
         

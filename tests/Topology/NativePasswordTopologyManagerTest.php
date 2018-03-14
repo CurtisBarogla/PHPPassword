@@ -34,6 +34,7 @@ class NativePasswordTopologyManagerTest extends TestCase
     
     /**
      * @see \Zoe\Component\Password\Topology\NativePasswordTopologyManager::isSecure()
+     * @see \Zoe\Component\Password\Topology\NativePasswordTopologyManager::setLimit()
      */
     public function testIsSecure(): void
     {
@@ -49,7 +50,8 @@ class NativePasswordTopologyManagerTest extends TestCase
         
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
         
-        $manager = new NativePasswordTopologyManager($generator, $loader, 6);
+        $manager = new NativePasswordTopologyManager($generator, $loader);
+        $this->assertNull($manager->setLimit(6));
         //make sure that load method from loaded is call once - test is below
         $manager->getRestrictedPasswordTopologies("FooGenerator");
         
@@ -162,6 +164,21 @@ class NativePasswordTopologyManagerTest extends TestCase
         
         $manager = new NativePasswordTopologyManager($generator, $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock(), 42);
         $manager->generate($password);
+    }
+    
+    /**
+     * @see \Zoe\Component\Password\Topology\NativePasswordTopologyManager
+     */
+    public function testExceptionWhenNoLimitHasBeenDefined(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage("Cannot initialize a set of restricted password topologies as no limit has been defined");
+        
+        $manager = new NativePasswordTopologyManager(
+            $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock(), 
+            $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock());
+        
+        $manager->getRestrictedPasswordTopologies("FooGenerator");
     }
     
 }
