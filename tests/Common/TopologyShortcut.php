@@ -45,7 +45,7 @@ class TopologyShortcut
                 $mock = $case->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
                 $mock->expects($case->any())->method("generatedBy")->will($case->returnValue($generatorName));
                 $mock->expects($case->any())->method("getTopology")->will($case->returnValue($topology));
-                $topologies[] = $mock;
+                $topologies[$generatorName][] = $mock;
             }
         }
         

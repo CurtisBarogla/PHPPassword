@@ -48,6 +48,13 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
     private $limit;
     
     /**
+     * Restricted password topologies
+     * 
+     * @var PasswordTopology[]|null
+     */
+    private $restrictedTopologies;
+    
+    /**
      * Initialize password topology manager
      * 
      * @param PasswordTopologyGeneratorInterface $generator
@@ -73,9 +80,9 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      */
     public function isSecure(PasswordTopology $passwordTopology): bool
     {
-        $topologies = $this->loader->load($this->limit);
+        $this->initializeRestrictedPasswordTopologies($passwordTopology->generatedBy());
         
-        foreach ($topologies as $topology) {
+        foreach ($this->restrictedTopologies as $topology) {
             if($passwordTopology->generatedBy() !== $topology->generatedBy())
                 continue;
                 
@@ -97,6 +104,31 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
                 $this->generator->getIdentifier()));
             
         return $this->generator->format($password);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \Zoe\Component\Password\Topology\PasswordTopologyManagerInterface::getRestrictedPasswordTopologies()
+     */
+    public function getRestrictedPasswordTopologies(string $generatorIdentifier): array
+    {
+        $this->initializeRestrictedPasswordTopologies($generatorIdentifier);
+        
+        return $this->restrictedTopologies;
+    }
+    
+    /**
+     * Initialize locale property for restricted password topologies
+     * 
+     * @param string $generatorIdentifier
+     *   Password topology generator identifier
+     */
+    private function initializeRestrictedPasswordTopologies(string $generatorIdentifier): void
+    {
+        if(null !== $this->restrictedTopologies)
+            return;
+        
+        $this->restrictedTopologies = $this->loader->load($generatorIdentifier, $this->limit);
     }
 
 }

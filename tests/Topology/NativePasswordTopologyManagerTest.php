@@ -37,28 +37,21 @@ class NativePasswordTopologyManagerTest extends TestCase
      */
     public function testIsSecure(): void
     {
-        $topologiesLoaded = TopologyShortcut::generateTopologies($this, [
-            "FooGenerator"      =>
-                [
-                    "fff",
-                    "zzz",
-                    "ppp",
-                    "mmm"
-                ],
-            "LambdaGenerator"   =>  
-                [
-                    "ggg",
-                    "aaa"
-                ]
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topology->expects($this->any())->method("generatedBy")->will($this->returnValue("FooGenerator"));
+        $topology->expects($this->any())->method("getTopology")->will($this->returnValue("xxx"));
+        
+        $topologiesReturned = TopologyShortcut::generateTopologies($this, [
+            "FooGenerator"      =>  ["ff", "ll", "pp"]
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
-        $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
-        $topology->expects($this->exactly(6))->method("generatedBy")->will($this->returnValue("FooGenerator"));
-        $topology->expects($this->exactly(4))->method("getTopology")->will($this->returnValue("aaa"));
+        $loader->expects($this->once())->method("load")->with("FooGenerator", 6)->will($this->returnValue($topologiesReturned["FooGenerator"]));
+        
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
         
         $manager = new NativePasswordTopologyManager($generator, $loader, 6);
+        //make sure that load method from loaded is call once - test is below
+        $manager->getRestrictedPasswordTopologies("FooGenerator");
         
         $this->assertTrue($manager->isSecure($topology));
     }
@@ -66,27 +59,18 @@ class NativePasswordTopologyManagerTest extends TestCase
     /**
      * @see \Zoe\Component\Password\Topology\NativePasswordTopologyManager::isSecure()
      */
-    public function testIsSecureWithNoCorrespondingTopology(): void
+    public function testIsSecureWithNoCorrespondingTopologyGeneratorIdentifier(): void
     {
-        $topologiesLoaded = TopologyShortcut::generateTopologies($this, [
-            "FooGenerator"      =>
-            [
-                "fff",
-                "zzz",
-                "ppp",
-                "mmm"
-            ],
-            "LambdaGenerator"   =>
-            [
-                "ggg",
-                "aaa"
-            ]
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topology->expects($this->any())->method("generatedBy")->will($this->returnValue("FooGenerator"));
+        $topology->expects($this->any())->method("getTopology")->will($this->returnValue("xxx"));
+        
+        $topologiesReturned = TopologyShortcut::generateTopologies($this, [
+            "BarGenerator"      =>  ["ff", "ll", "pp"]
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
-        $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
-        $topology->expects($this->exactly(6))->method("generatedBy")->will($this->returnValue("NotRegisteredLoader"));
-        $topology->expects($this->never())->method("getTopology");
+        $loader->expects($this->once())->method("load")->with("FooGenerator", 6)->will($this->returnValue($topologiesReturned["BarGenerator"]));
+        
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
         
         $manager = new NativePasswordTopologyManager($generator, $loader, 6);
@@ -99,25 +83,16 @@ class NativePasswordTopologyManagerTest extends TestCase
      */
     public function testIsSecureWhenNotSecure(): void
     {
-        $topologiesLoaded = TopologyShortcut::generateTopologies($this, [
-            "FooGenerator"      =>
-            [
-                "fff",
-                "zzz",
-                "ppp",
-                "mmm"
-            ],
-            "LambdaGenerator"   =>
-            [
-                "ggg",
-                "aaa"
-            ]
+        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topology->expects($this->any())->method("generatedBy")->will($this->returnValue("FooGenerator"));
+        $topology->expects($this->any())->method("getTopology")->will($this->returnValue("ff"));
+        
+        $topologiesReturned = TopologyShortcut::generateTopologies($this, [
+            "FooGenerator"      =>  ["ff", "ll", "pp"]
         ]);
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
-        $loader->expects($this->once())->method("load")->with(6)->will($this->returnValue($topologiesLoaded));
-        $topology = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
-        $topology->expects($this->exactly(3))->method("generatedBy")->will($this->returnValue("FooGenerator"));
-        $topology->expects($this->exactly(3))->method("getTopology")->will($this->returnValue("ppp"));
+        $loader->expects($this->once())->method("load")->with("FooGenerator", 6)->will($this->returnValue($topologiesReturned["FooGenerator"]));
+        
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
         
         $manager = new NativePasswordTopologyManager($generator, $loader, 6);
@@ -130,15 +105,44 @@ class NativePasswordTopologyManagerTest extends TestCase
      */
     public function testGenerate(): void
     {
-        $topologyReturned = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
         $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+
+        $topologyGenerated = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topologyGenerated->method("generatedBy")->will($this->returnValue("FooGenerator"));
+        $topologyGenerated->method("getTopology")->will($this->returnValue("Foo"));
+        
         $generator = $this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock();
+        $generator->expects($this->once())->method("format")->with($password)->will($this->returnValue($topologyGenerated));
         $generator->expects($this->once())->method("support")->with($password)->will($this->returnValue(true));
-        $generator->expects($this->once())->method("format")->with($password)->will($this->returnValue($topologyReturned));
+        $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         
-        $manager = new NativePasswordTopologyManager($generator, $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock(), 42);
+        $manager = new NativePasswordTopologyManager($generator, $loader, 6);
         
-        $this->assertSame($topologyReturned, $manager->generate($password));
+        $topology = $manager->generate($password);
+        
+        $this->assertSame("FooGenerator", $topology->generatedBy());
+        $this->assertSame("Foo", $topology->getTopology());
+    }
+    
+    /**
+     * @see \Zoe\Component\Password\Topology\NativePasswordTopologyManager::generate()
+     */
+    public function testGetRestrictedPasswordTopologies(): void
+    {
+        $topologiesReturned = TopologyShortcut::generateTopologies($this, [
+            "FooGenerator"      =>  ["ff", "ll", "pp"]
+        ]);
+        $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
+        $loader->expects($this->once())->method("load")->with("FooGenerator", 4)->will($this->returnValue($topologiesReturned["FooGenerator"]));
+        
+        $manager = new NativePasswordTopologyManager($this->getMockBuilder(PasswordTopologyGeneratorInterface::class)->getMock(), $loader, 4);
+        
+        $topologies = $manager->getRestrictedPasswordTopologies("FooGenerator");
+        $this->assertCount(3, $topologies);
+        
+        foreach ($topologies as $topology) {
+            $this->assertInstanceOf(PasswordTopology::class, $topology);
+        }
     }
     
                     /**_____EXCEPTIONS_____**/

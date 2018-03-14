@@ -49,4 +49,15 @@ interface PasswordTopologyManagerInterface
      */
     public function generate(Password $password): PasswordTopology;
     
+    /**
+     * Initialize a set of restricted password topologies identified by a generator identifier
+     * 
+     * @param string $generatorIdentifier
+     *   Password topology generator identifier
+     * 
+     * @return PasswordTopology[]
+     *   Asset of restricted password topologies
+     */
+    public function getRestrictedPasswordTopologies(string $generatorIdentifier): array;
+    
 }
