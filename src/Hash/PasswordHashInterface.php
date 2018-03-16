@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Hash;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Responsible to hash and validate password
  * 
@@ -24,7 +26,7 @@ interface PasswordHashInterface
     /**
      * Hash a password
      * 
-     * @param string $password
+     * @param Password $password
      *   Password to hash
      * @param string|null $salt
      *   Salt to apply. Can be null
@@ -32,12 +34,12 @@ interface PasswordHashInterface
      * @return string
      *   Hashed password
      */
-    public function hash(string $password, ?string $salt = null): string;
+    public function hash(Password $password, ?string $salt = null): string;
     
     /**
      * Check if a password comply its hashed version
      * 
-     * @param string $password
+     * @param Password $password
      *   Clear password
      * @param string $hash
      *   Hashed password
@@ -47,7 +49,7 @@ interface PasswordHashInterface
      * @return bool
      *   True if the password corresponds to its hashed version. False otherwise
      */
-    public function isValid(string $password, string $hash, ?string $salt = null): bool;
+    public function isValid(Password $password, string $hash, ?string $salt = null): bool;
     
     /**
      * Check if a hash must be rehashed to comply new parameters

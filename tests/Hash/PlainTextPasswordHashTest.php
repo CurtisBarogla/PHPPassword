@@ -14,6 +14,7 @@ namespace ZoeTest\Component\Password\Hash;
 
 use PHPUnit\Framework\TestCase;
 use Zoe\Component\Password\Hash\PlainTextPasswordHash;
+use Zoe\Component\Password\Password;
 
 /**
  * NullPasswordHash testcase
@@ -31,9 +32,12 @@ class PlainTextPasswordHashTest extends TestCase
      */
     public function testHash(): void
     {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getValue")->will($this->returnValue("Foo"));
+        
         $hash = new PlainTextPasswordHash();
         
-        $this->assertSame("Foo", $hash->hash("Foo"));
+        $this->assertSame("Foo", $hash->hash($password));
     }
     
     /**
@@ -41,12 +45,18 @@ class PlainTextPasswordHashTest extends TestCase
      */
     public function testIsValid(): void
     {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->exactly(2))->method("getValue")->will($this->returnValue("Foo"));
+        $incorrectPassword = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $incorrectPassword->expects($this->once())->method("getValue")->will($this->returnValue("Bar"));
+        
+        
         $hash = new PlainTextPasswordHash();
         
-        $hashed = $hash->hash("Foo");
+        $hashed = $hash->hash($password);
         
-        $this->assertTrue($hash->isValid("Foo", $hashed));
-        $this->assertFalse($hash->isValid("Bar", $hashed));
+        $this->assertTrue($hash->isValid($password, $hashed));
+        $this->assertFalse($hash->isValid($incorrectPassword, $hashed));
     }
     
     /**

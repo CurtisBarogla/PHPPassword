@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Hash;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Do nothing
  * 
@@ -25,18 +27,18 @@ class PlainTextPasswordHash implements PasswordHashInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Hash\PasswordHashInterface::hash()
      */
-    public function hash(string $password, ?string $salt = null): string
+    public function hash(Password $password, ?string $salt = null): string
     {
-        return $password;
+        return $password->getValue();
     }
 
     /**
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Hash\PasswordHashInterface::isValid()
      */
-    public function isValid(string $password, string $hash, ?string $salt = null): bool
+    public function isValid(Password $password, string $hash, ?string $salt = null): bool
     {
-        return $password === $hash;
+        return $password->getValue() === $hash;
     }
     
     /**

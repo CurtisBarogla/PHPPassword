@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Zoe\Component\Password\Hash;
 
+use Zoe\Component\Password\Password;
+
 /**
  * Use functions password_* from php
  * 
@@ -71,18 +73,18 @@ class NativePasswordHash implements PasswordHashInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Hash\PasswordHashInterface::hash()
      */
-    public function hash(string $password, ?string $salt = null): string
+    public function hash(Password $password, ?string $salt = null): string
     {
-        return \password_hash($password, $this->algorithm, $this->options);
+        return \password_hash($password->getValue(), $this->algorithm, $this->options);
     }
 
     /**
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Hash\PasswordHashInterface::isValid()
      */
-    public function isValid(string $password, string $hash, ?string $salt = null): bool
+    public function isValid(Password $password, string $hash, ?string $salt = null): bool
     {
-        return \password_verify($password, $hash);
+        return \password_verify($password->getValue(), $hash);
     }    
     
     /**

@@ -14,6 +14,7 @@ namespace ZoeTest\Component\Password\Hash;
 
 use PHPUnit\Framework\TestCase;
 use Zoe\Component\Internal\ReflectionTrait;
+use Zoe\Component\Password\Password;
 use Zoe\Component\Password\Hash\NativePasswordHash;
 
 /**
@@ -75,9 +76,12 @@ class NativePasswordHashTest extends TestCase
      */
     public function testHashBCrypt(): void
     {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getValue")->will($this->returnValue("Foo"));
+        
         $hash = new NativePasswordHash();
         
-        $this->assertNotFalse($hash->hash("Foo"));
+        $this->assertNotFalse($hash->hash($password));
     }
     
     /**
@@ -88,9 +92,12 @@ class NativePasswordHashTest extends TestCase
         if(!\defined("PASSWORD_ARGON2I"))
             $this->markTestSkipped("PASSWORD_ARGON2I not defined");
         
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getValue")->will($this->returnValue("Foo"));
+            
         $hash = new NativePasswordHash(PASSWORD_ARGON2I);
         
-        $this->assertNotFalse($hash->hash("Foo"));
+        $this->assertNotFalse($hash->hash($password));
     }
     
     /**
@@ -98,12 +105,17 @@ class NativePasswordHashTest extends TestCase
      */
     public function testIsValidBCrypt(): void
     {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->exactly(2))->method("getValue")->will($this->returnValue("Foo"));
+        $incorrectPassword = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $incorrectPassword->expects($this->once())->method("getValue")->will($this->returnValue("Bar"));
+        
         $hash = new NativePasswordHash();
         
-        $hashed = $hash->hash("Foo");
+        $hashed = $hash->hash($password);
         
-        $this->assertTrue($hash->isValid("Foo", $hashed));
-        $this->assertFalse($hash->isValid("Bar", $hashed));
+        $this->assertTrue($hash->isValid($password, $hashed));
+        $this->assertFalse($hash->isValid($incorrectPassword, $hashed));
     }
     
     /**
@@ -114,12 +126,17 @@ class NativePasswordHashTest extends TestCase
         if(!\defined("PASSWORD_ARGON2I"))
             $this->markTestSkipped("PASSWORD_ARGON2I not defined");
         
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->exactly(2))->method("getValue")->will($this->returnValue("Foo"));
+        $incorrectPassword = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $incorrectPassword->expects($this->once())->method("getValue")->will($this->returnValue("Bar"));
+            
         $hash = new NativePasswordHash(PASSWORD_ARGON2I);
         
-        $hashed = $hash->hash("Foo");
+        $hashed = $hash->hash($password);
         
-        $this->assertTrue($hash->isValid("Foo", $hashed));
-        $this->assertFalse($hash->isValid("Bar", $hashed));
+        $this->assertTrue($hash->isValid($password, $hashed));
+        $this->assertFalse($hash->isValid($incorrectPassword, $hashed));
     }
     
     /**
@@ -127,9 +144,12 @@ class NativePasswordHashTest extends TestCase
      */
     public function testNeedsRehashBCrypt(): void
     {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getValue")->will($this->returnValue("Foo"));
+        
         $hash = new NativePasswordHash();
         
-        $default = $hash->hash("Foo");
+        $default = $hash->hash($password);
         
         $this->assertFalse($hash->needsRehash($default));
         
@@ -146,9 +166,12 @@ class NativePasswordHashTest extends TestCase
         if(!\defined("PASSWORD_ARGON2I"))
             $this->markTestSkipped("PASSWORD_ARGON2I not defined");
         
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        $password->expects($this->once())->method("getValue")->will($this->returnValue("Foo"));
+            
         $hash = new NativePasswordHash(PASSWORD_ARGON2I);
         
-        $default = $hash->hash("Foo");
+        $default = $hash->hash($password);
         
         $this->assertFalse($hash->needsRehash($default));
         
