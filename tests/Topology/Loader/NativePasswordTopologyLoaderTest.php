@@ -13,6 +13,7 @@ declare(strict_types = 1);
 namespace ZoeTest\Component\Password\Topology\Loader;
 
 use PHPUnit\Framework\TestCase;
+use Zoe\Component\Password\Topology\PasswordTopology;
 use Zoe\Component\Password\Topology\Loader\NativePasswordTopologyLoader;
 
 /**
@@ -27,27 +28,64 @@ class NativePasswordTopologyLoaderTest extends TestCase
 {
     
     /**
+     * Topologies given to the loader
+     * 
+     * @var array
+     */
+    private $topologiesMap = [
+        "BarIdentifier"     =>  [
+            "foo", "bar", "moz"
+        ],
+        "PozIdentifier"     =>  []
+    ];
+    
+    /**
      * @see \Zoe\Component\Password\Topology\Loader\NativePasswordTopologyLoader::load()
      */
-    public function testLoad(): void
+    public function testLoadWhenFound(): void
+    {       
+        $topologyGiven = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topologyGiven->expects($this->exactly(2))->method("generatedBy")->will($this->returnValue("BarIdentifier"));
+        
+        $loader = new NativePasswordTopologyLoader($this->topologiesMap);
+        
+        // with limit
+        $loadedLimited = $loader->load($topologyGiven, 2);
+        // with no limit
+        $loadedFull = $loader->load($topologyGiven, null);
+        
+        $this->assertSame(2, \count($loadedLimited));
+        $this->assertSame("foo", $loadedLimited[0]->getTopology());
+        $this->assertSame("bar", $loadedLimited[1]->getTopology());
+        
+        $this->assertSame(3, \count($loadedFull));
+        $this->assertSame("moz", $loadedFull[2]->getTopology());
+    }
+    
+    /**
+     * @see \Zoe\Component\Password\Topology\Loader\NativePasswordTopologyLoader::load()
+     */
+    public function testLoadWhenNotFound(): void
     {
-        $topologies = [
-            "BarIdentifier"     =>  [
-                "foo",
-                "bar",
-                "moz"
-            ]
-        ];
+        $topologyGiven = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topologyGiven->expects($this->once())->method("generatedBy")->will($this->returnValue("FooIdentifier"));
         
-        $loader = new NativePasswordTopologyLoader($topologies);
-        $this->assertSame([], $loader->load("FooIdentifier", 42));
-        $topologies = $loader->load("BarIdentifier", 2);
+        $loader = new NativePasswordTopologyLoader($this->topologiesMap);
         
-        $this->assertCount(2, $topologies);
-        $this->assertSame("foo", $topologies[0]->getTopology());
-        $this->assertSame("BarIdentifier", $topologies[0]->generatedBy());
-        $this->assertSame("bar", $topologies[1]->getTopology());
-        $this->assertSame("BarIdentifier", $topologies[1]->generatedBy());
+        $this->assertNull($loader->load($topologyGiven, 42));
+    }
+    
+    /**
+     * @see \Zoe\Component\Password\Topology\Loader\NativePasswordTopologyLoader::load()
+     */
+    public function testLoadWhenNoIdentifierCorresponding(): void
+    {
+        $topologyGiven = $this->getMockBuilder(PasswordTopology::class)->disableOriginalConstructor()->getMock();
+        $topologyGiven->expects($this->once())->method("generatedBy")->will($this->returnValue("PozIdentifier"));
+        
+        $loader = new NativePasswordTopologyLoader($this->topologiesMap);
+        
+        $this->assertNull($loader->load($topologyGiven, 42));
     }
     
 }

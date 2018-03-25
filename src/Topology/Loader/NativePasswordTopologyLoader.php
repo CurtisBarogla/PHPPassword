@@ -13,6 +13,7 @@ declare(strict_types = 1);
 namespace Zoe\Component\Password\Topology\Loader;
 
 use Zoe\Component\Password\Topology\PasswordTopology;
+use Zoe\Component\Password\Topology\PasswordTopologyCollection;
 
 /**
  * Load from a simple array.
@@ -52,17 +53,20 @@ class NativePasswordTopologyLoader implements PasswordTopologyLoaderInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface::load()
      */
-    public function load(string $generatorIdentifier, int $limit): array
+    public function load(PasswordTopology $topology, ?int $limit): ?PasswordTopologyCollection
     {
-        if(!isset($this->topologies[$generatorIdentifier]))
-            return [];
+        $identifier = $topology->generatedBy();
+        if(!isset($this->topologies[$identifier]) || empty($this->topologies[$identifier]))
+            return null;
         
-        $topologies = [];
-        foreach (\array_slice($this->topologies[$generatorIdentifier], 0, $limit) as $topology) {
-            $topologies[] = new PasswordTopology($topology, $generatorIdentifier);
+        $collection = new PasswordTopologyCollection();
+
+        $loadables = (null !== $limit) ? \array_slice($this->topologies[$identifier], 0, $limit) : $this->topologies[$identifier];
+        foreach ($loadables as $topology) {
+            $collection[] = new PasswordTopology($topology, $identifier);
         }
  
-        return $topologies;
+        return $collection;
     }
    
 }
