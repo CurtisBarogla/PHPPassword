@@ -31,6 +31,9 @@
 		"topology",
 		"security"
 	],
+	"suggest" : {
+		"psr/simple-cache" : "Psr-16 Cache Implementation to use cache"
+	},
 	"minimum-stability" : "stable",
 	"extra" : {
 		"branch-alias" : {
