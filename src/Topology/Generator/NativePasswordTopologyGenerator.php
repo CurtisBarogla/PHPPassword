@@ -171,14 +171,7 @@ class NativePasswordTopologyGenerator implements PasswordTopologyGeneratorInterf
      */
     protected function preg(string $value, string $limit = "+", string $regex): bool
     {
-        $regex = "#(*UTF8)^[{$regex}]{$limit}$#";
-
-        if(false !== $result = \preg_match($regex, $value)) {
-            return (bool) $result;
-        }
-        
-        throw new \LogicException(\sprintf("This regex '%s' cannot be compiled by preg_match",
-            $regex));
+        return (bool) \preg_match("#(*UTF8)^[{$regex}]{$limit}$#", $value);
     }
 
 }
