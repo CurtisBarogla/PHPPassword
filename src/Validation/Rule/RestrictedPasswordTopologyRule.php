@@ -66,6 +66,7 @@ class RestrictedPasswordTopologyRule extends PasswordRule
         $topology = $this->passwordTopologyManager->generate($password);
         
         if(!$this->passwordTopologyManager->isSecure($topology)) {
+            $errors = (null !== $restricted = $this->passwordTopologyManager->getRestrictedPasswordTopologies()) ? \iterator_to_array($restricted) : [];
             $this->error = $this->interpolate(
                 [                
                     "restricted_topologies",
@@ -76,7 +77,7 @@ class RestrictedPasswordTopologyRule extends PasswordRule
                         ", ", 
                         \array_map(function(PasswordTopology $topology): string {
                             return $topology->getTopology();
-                        }, $this->passwordTopologyManager->getRestrictedPasswordTopologies($topology->generatedBy()))
+                        }, $errors)
                     ),
                     $topology->getTopology()
                 ], 
