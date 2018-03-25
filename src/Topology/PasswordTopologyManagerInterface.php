@@ -52,13 +52,10 @@ interface PasswordTopologyManagerInterface
     /**
      * Initialize a set of restricted password topologies identified by a generator identifier
      * 
-     * @param string $generatorIdentifier
-     *   Password topology generator identifier
-     * 
-     * @return PasswordTopology[]
-     *   A set of restricted password topologies
+     * @return PasswordTopologyCollection|null
+     *   A set of restricted password topologies or null if no topology has been found
      */
-    public function getRestrictedPasswordTopologies(string $generatorIdentifier): array;
+    public function getRestrictedPasswordTopologies(): ?PasswordTopologyCollection;
     
     /**
      * Define a limit amount of password topologies to restrict

@@ -50,9 +50,16 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
     /**
      * Restricted password topologies
      * 
-     * @var PasswordTopology[]|null
+     * @var PasswordTopologyCollection|null
      */
     private $restrictedTopologies;
+    
+    /**
+     * If restricted password topologies has been loaded
+     * 
+     * @var string
+     */
+    private $initialized = false;
     
     /**
      * Initialize password topology manager
@@ -82,17 +89,15 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      */
     public function isSecure(PasswordTopology $passwordTopology): bool
     {
-        $this->initializeRestrictedPasswordTopologies($passwordTopology->generatedBy());
+        $this->initializeRestrictedPasswordTopologies($passwordTopology);
         
-        foreach ($this->restrictedTopologies as $topology) {
-            if($passwordTopology->generatedBy() !== $topology->generatedBy())
-                continue;
-                
-            if($passwordTopology->getTopology() === $topology->getTopology())
-                return false;
-        }
+        if(null === $this->restrictedTopologies)
+            return true;
         
-        return true;
+        if($this->restrictedTopologies->getCollectionGeneratorIdentifier() !== $passwordTopology->generatedBy())
+            return true;
+            
+        return !isset($this->restrictedTopologies[$passwordTopology->getTopology()]);
     }
 
     /**
@@ -112,9 +117,9 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      * {@inheritDoc}
      * @see \Zoe\Component\Password\Topology\PasswordTopologyManagerInterface::getRestrictedPasswordTopologies()
      */
-    public function getRestrictedPasswordTopologies(string $generatorIdentifier): array
+    public function getRestrictedPasswordTopologies(): ?PasswordTopologyCollection
     {
-        $this->initializeRestrictedPasswordTopologies($generatorIdentifier);
+        $this->initializeRestrictedPasswordTopologies();
         
         return $this->restrictedTopologies;
     }
@@ -135,16 +140,25 @@ class NativePasswordTopologyManager implements PasswordTopologyManagerInterface
      * 
      * @param string $generatorIdentifier
      *   Password topology generator identifier
+     *   
+     * @throws \LogicException
+     *   When no limit has been defined
+     * @throws \LogicException
+     *   When no topology has been given as property has been not already initialized
      */
-    private function initializeRestrictedPasswordTopologies(string $generatorIdentifier): void
+    private function initializeRestrictedPasswordTopologies(?PasswordTopology $topology = null): void
     {
         if(null === $this->limit)
             throw new \LogicException("Cannot initialize a set of restricted password topologies as no limit has been defined");
         
-        if(null !== $this->restrictedTopologies)
+        if($this->initialized)
             return;
         
-        $this->restrictedTopologies = $this->loader->load($generatorIdentifier, $this->limit);
+        if(!$this->initialized && null === $topology)
+            throw new \LogicException("To get restricted password topologies, you need to initialize the manager by giving a PasswordTopology. Use isSecure method");
+        
+        $this->restrictedTopologies = $this->loader->load($topology, $this->limit);
+        $this->initialized = true;
     }
 
 }
