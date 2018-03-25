@@ -20,6 +20,7 @@ use Zoe\Component\Password\Validation\Rule\RestrictedPasswordTopologyRule;
 use ZoeTest\Component\Password\Common\TopologyShortcut;
 use Zoe\Component\Password\Topology\PasswordTopologyCollection;
 use Zoe\Component\Internal\GeneratorTrait;
+use Zoe\Component\Password\Exception\UnexceptedPasswordFormatException;
 
 /**
  * RestrictedPasswordTopologyRule testcase
@@ -46,7 +47,7 @@ class RestrictedPasswordTopologyRuleTest extends TestCase
         $manager->expects($this->once())->method("generate")->with($password)->will($this->returnValue($topologyGenerated));
         $manager->expects($this->once())->method("isSecure")->with($topologyGenerated)->will($this->returnValue(true));
         
-        $rule = new RestrictedPasswordTopologyRule("Foo", $manager, 3);
+        $rule = new RestrictedPasswordTopologyRule("Foo", "Bar", $manager, 3);
         
         $this->assertTrue($rule->comply($password));
     }
@@ -71,10 +72,27 @@ class RestrictedPasswordTopologyRuleTest extends TestCase
         $manager->expects($this->once())->method("isSecure")->with($topologyGenerated)->will($this->returnValue(false));
         $manager->expects($this->once())->method("getRestrictedPasswordTopologies")->will($this->returnValue($restrictedCollection));
         
-        $rule = new RestrictedPasswordTopologyRule("Foo {:restricted_topologies:} - {:current_topology:}", $manager, 3);
+        $rule = new RestrictedPasswordTopologyRule("Foo {:restricted_topologies:} - {:current_topology:}", "Bar", $manager, 3);
         
         $this->assertFalse($rule->comply($password));
         $this->assertSame("Foo foo, bar, moz - foo", $rule->getError());
+    }
+    
+    /**
+     * @see \Zoe\Component\Password\Validation\Rule\RestrictedPasswordTopologyRule::comply()
+     * @see \Zoe\Component\Password\Validation\Rule\RestrictedPasswordTopologyRule::getError()
+     */
+    public function testComplyFailWhenTopologyCannotBeGenerated(): void
+    {
+        $password = $this->getMockBuilder(Password::class)->disableOriginalConstructor()->getMock();
+        
+        $manager = $this->getMockBuilder(PasswordTopologyManagerInterface::class)->getMock();
+        $manager->expects($this->once())->method("generate")->with($password)->will($this->throwException(new UnexceptedPasswordFormatException()));
+        
+        $rule = new RestrictedPasswordTopologyRule("Foo", "BarError", $manager, 3);
+        
+        $this->assertFalse($rule->comply($password));
+        $this->assertSame("BarError", $rule->getError());
     }
     
 }
