@@ -32,7 +32,7 @@
 		"security"
 	],
 	"suggest" : {
-		"psr/simple-cache" : "Psr-16 Cache Implementation to use cache"
+		"barogla/cache" : "Psr-16 Cache Implementation to use cache"
 	},
 	"minimum-stability" : "stable",
 	"extra" : {
