@@ -1,5 +1,3 @@
-# Password component
+# Password Component
 
-Far from being finished :)
-
-Password component
+Documentation soon <sup>TM</sup>

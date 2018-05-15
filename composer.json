@@ -1,6 +1,6 @@
 {
-	"name" : "barogla/password",
-	"description" : "Password Component - Zoe",
+	"name" : "ness/password",
+	"description" : "Password Component - Ness",
 	"type" : "library",
 	"license" : "MIT",
 	"authors" : [{
@@ -23,21 +23,13 @@
 	"require" : {
 		"php" : ">= 7.1"
 	},
-	"require-dev" : {
-		"barogla/internal" : "dev-master"
-	},
 	"keywords" : [
 		"password",
 		"topology",
-		"security"
+		"security",
+		"generator",
+		"bcryp",
+		"argon"
 	],
-	"suggest" : {
-		"barogla/cache" : "Psr-16 Cache Implementation to use cache"
-	},
-	"minimum-stability" : "stable",
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "2.0-dev"
-		}
-	}
+	"minimum-stability" : "stable"
 }
