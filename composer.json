@@ -28,7 +28,7 @@
 		"topology",
 		"security",
 		"generator",
-		"bcryp",
+		"bcrypt",
 		"argon"
 	],
 	"minimum-stability" : "stable"
