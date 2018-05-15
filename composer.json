@@ -13,8 +13,8 @@
 	"homepage" : "https://github.com/CurtisBarogla/Password",
 	"autoload" : {
 		"psr-4" : {
-			"Zoe\\Component\\Password\\" : "./src",
-			"ZoeTest\\Component\\Password\\" : "./tests"
+			"Ness\\Component\\Password\\" : "./src",
+			"NessTest\\Component\\Password\\" : "./tests"
 		},
 		"exclude-from-classmap" : [
 			"tests"
