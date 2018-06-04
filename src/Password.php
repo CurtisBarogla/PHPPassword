@@ -32,7 +32,7 @@ class Password implements \Countable
     /**
      * All characters
      * 
-     * @var array[string]
+     * @var array[string]|null
      */
     private $exploded;
     
@@ -45,7 +45,6 @@ class Password implements \Countable
     public function __construct(string $value)
     {
         $this->value = $value;
-        $this->exploded = \preg_split("//u", $this->value, 0, PREG_SPLIT_NO_EMPTY);
     }
     
     /**
@@ -67,7 +66,7 @@ class Password implements \Countable
      */
     public function getExploded(): array
     {
-        return $this->exploded;
+        return $this->exploded ?? $this->exploded = \preg_split("//u", $this->value, 0, PREG_SPLIT_NO_EMPTY);
     }
     
     /**
@@ -76,7 +75,7 @@ class Password implements \Countable
      */
     public function count()
     {
-        return \count($this->exploded);
+        return \count($this->getExploded());
     }
     
 }
