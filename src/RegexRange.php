@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Ness\Component\Password;
 
+use function Ness\Component\Password\External\mb_range;
+
 /**
  * Simple wrapper around regexes to compile multiple ranges of characters regrouped over an unique identifier.
  * Not sure if it is really useful ^^, but for now...
@@ -98,12 +100,23 @@ class RegexRange implements \Countable
     }
     
     /**
+     * Return a list of all characters ranges defined
+     * 
+     * @return array
+     *   List of all characters of defined ranges
+     */
+    public function getList(): array
+    {
+        return \array_keys($this->hash);
+    }
+    
+    /**
      * Add a set of characters ranges
      * 
      * @param string $identifier
      *   Ranges identifier
      * @param array $ranges
-     *   Characters ranges
+     *   Characters ranges (e.g : "A-Z" for all uppercases)
      * @param int|null $min
      *   Minimum of characters required. Set to null (or 1) to at least once 
      * @param int|null $max
@@ -112,21 +125,25 @@ class RegexRange implements \Countable
      * @throws \LogicException
      *   When min is greater or equal than max
      */
-    public function add(string $identifier, array $ranges, ?int $min, ?int $max): void
+    public function add(string $identifier, array $ranges, ?int $min = null, ?int $max = null): void
     {
         if(null !== $max && $min >= $max) 
             throw new \LogicException("Min cannot be greater or equal than max on '{$identifier}' range");
+        
+        $compiled = [];
+        foreach ($ranges as $range) {
+            $exploded = \explode("-", $range);
+            $compiled = \array_merge($compiled, mb_range($exploded[0], $exploded[1]));
+            foreach ($compiled as $character)
+                $this->hash[$character] = $identifier;
+        }
         
         $ranges = \implode("", $ranges);
         $this->global .= "(?=.*[{$ranges}]{0,})";
         $this->postBuild .= $ranges;
         $this->map[$identifier]["regex"] = "[{$ranges}]+";
         $this->map[$identifier]["min"] = $min ?? 1;
-        $this->map[$identifier]["max"] = (null === $max) ? null : $max;
-        
-        // reset if calls to preg has been made
-        $this->hash = [];
-        $this->table = [];
+        $this->map[$identifier]["max"] = $max;
     }
     
     /**
@@ -143,8 +160,7 @@ class RegexRange implements \Countable
         // no need to go further if already passed earlier
         if(\array_key_exists($string, $this->table))
             return $this->table[$string];
-        
-        // next level WTF ! If someone wants to help me on this, i'm open :) don't want to look at this again personally
+
         $global = null;
         if(!$this->validate("^{$this->global}[{$this->postBuild}]+$", $string, $global))
             return $this->table[$string] = null;
@@ -154,8 +170,6 @@ class RegexRange implements \Countable
             $matches = null;
             $this->validate($map["regex"], $global[0], $matches, true);
             $matches = \implode("", $matches[0]);
-            foreach (\preg_split("//u", $matches, 0, PREG_SPLIT_NO_EMPTY) as $character)
-                $this->hash[$character] = $identifier;
                 
             $result = (!isset($matches[0])) ? 0 : \mb_strlen($matches);
             
@@ -168,8 +182,7 @@ class RegexRange implements \Countable
     
     /**
      * Get the range identifier of the given character.
-     * This character MUST corresponds to a given one to a precedent call to preg as a hash table is generated at this moment else it will return null
-     * 
+     *
      * @param string $character
      *   Character to get the range
      * 

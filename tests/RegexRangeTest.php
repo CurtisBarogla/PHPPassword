@@ -46,13 +46,26 @@ class RegexRangeTest extends PasswordTestCase
     public function testGetRanges(): void 
     {
         $range = new RegexRange("Foo");
-        $range->add("foo", ["a-z"], null, 4);
+        $range->add("foo", ["a-z", "a-a"], null, 4);
         $range->add("bar", ["A-Z"], 4, null);
         
         $this->assertSame([
-            "foo" => ["regex" => "[a-z]+", "min" => 1, "max" => 4],
+            "foo" => ["regex" => "[a-za-a]+", "min" => 1, "max" => 4],
             "bar" => ["regex" => "[A-Z]+", "min" => 4, "max" => null]
         ], $range->getRanges());
+    }
+    
+    /**
+     * @see \Ness\Component\Password\RegexRange::getList()
+     */
+    public function testGetList(): void
+    {
+        $range = new RegexRange("Foo");
+        $range->add("foo", ["a-z", "a-a"], null, 4);
+        $range->add("bar", ["A-Z"], 4, null);
+        //$range->add("moz", ["@-/"]);
+        
+        $this->assertSame(\preg_split("//u", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0, PREG_SPLIT_NO_EMPTY), $range->getList());
     }
     
     /**
@@ -100,15 +113,12 @@ class RegexRangeTest extends PasswordTestCase
         
         $range->add("foo", ["a-z"], null, null);
         $range->add("bar", ["A-Z"], null, null);
-        
-        $this->assertNull($range->pregRange("o"));
-        $this->assertNull($range->pregRange("F"));
-        
+
         $range->preg("Fo");
         
         $this->assertSame("foo", $range->pregRange("o"));
         $this->assertSame("bar", $range->pregRange("F"));
-        $this->assertNull($range->pregRange("a"));
+        $this->assertNull($range->pregRange("é"));
     }
     
     /**
@@ -120,8 +130,8 @@ class RegexRangeTest extends PasswordTestCase
         
         $this->assertSame(0, \count($range));
         
-        $range->add("Foo", ["Foo"], 0, 1);
-        $range->add("Bar", ["Bar"], null, null);
+        $range->add("Foo", ["Foo-Bar"], 0, 1);
+        $range->add("Bar", ["Bar-Foo"], null, null);
         
         $this->assertSame(2, \count($range));
     }
@@ -163,7 +173,7 @@ class RegexRangeTest extends PasswordTestCase
         $this->expectExceptionMessage("This regex '#(*UTF8)^(?=.*[a--z]{0,})[a--z]+$#' cannot be compiled by preg_match_*");
         
         $range = new RegexRange("Foo");
-        $range->add("foo", ["a--z"], null, null);
+        @$range->add("foo", ["a--z"], null, null);
         
         @$range->preg("foo");
     }
