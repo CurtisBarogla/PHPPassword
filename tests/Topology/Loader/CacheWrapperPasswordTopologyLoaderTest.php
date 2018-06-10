@@ -34,6 +34,9 @@ class CacheWrapperPasswordTopologyLoaderTest extends PasswordTestCase
      */
     public function testLoad(): void
     {
+        if(!\class_exists("Psr\SimpleCache\CacheInterface"))
+            $this->markTestSkipped("PSR16 not found");
+        
         $collection = $this->getMockBuilder(PasswordTopologyCollection::class)->disableOriginalConstructor()->getMock();
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         $loader->expects($this->exactly(2))->method("load")->withConsecutive([null, "Foo"], [3, "Foo"])->will($this->returnValue($collection));
