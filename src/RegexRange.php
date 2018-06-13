@@ -166,11 +166,12 @@ class RegexRange implements \Countable
         $total = \count($this);
         foreach ($this->map as $identifier => $map) {
             $matches = null;
-            $this->validate($map["regex"], $global[0], $matches, true);
-            $matches = \implode("", $matches[0]);
-                
-            $result = (!isset($matches[0])) ? 0 : \mb_strlen($matches);
-            
+            if(!$this->validate($map["regex"], $global[0], $matches, true)) {
+                $total--;
+                continue;
+            }
+
+            $result = \mb_strlen(\implode("", $matches[0]));
             if( ($result < $map["min"]) || (null !== $map["max"] && $result > $map["max"]) )
                 $total--;
         }
