@@ -130,11 +130,9 @@ class RegexRange implements \Countable
         if(null !== $max && $min >= $max) 
             throw new \LogicException("Min cannot be greater or equal than max on '{$identifier}' range");
         
-        $compiled = [];
         foreach ($ranges as $range) {
             $exploded = \explode("-", $range);
-            $compiled = \array_merge($compiled, mb_range($exploded[0], $exploded[1]));
-            foreach ($compiled as $character)
+            foreach (mb_range($exploded[0], $exploded[1]) as $character)
                 $this->hash[$character] = $identifier;
         }
         
