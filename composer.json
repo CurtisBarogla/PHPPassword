@@ -27,6 +27,9 @@
 	"require" : {
 		"php" : ">= 7.1"
 	},
+	"suggest" : {
+		"ness/cache" : "To use cache mechanism"
+	},
 	"keywords" : [
 		"password",
 		"topology",
