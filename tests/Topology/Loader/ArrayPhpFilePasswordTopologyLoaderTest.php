@@ -61,4 +61,16 @@ class ArrayPhpFilePasswordTopologyLoaderTest extends PasswordTopologyTestCase
         $loader = new ArrayPhpFilePasswordTopologyLoader(["Foo"]);
     }
     
+    /**
+     * @see \Ness\Component\Password\Topology\Loader\ArrayPhpFilePasswordTopologyLoader::__construct()
+     */
+    public function testExceptionWhenAFileDoesNotReturnAnArray(): void
+    {
+        $file = __DIR__."/../../Fixtures/Topology/Loader/invalid_file.php";
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage("This file '{$file}' MUST return an array");
+        
+        $loader = new ArrayPhpFilePasswordTopologyLoader([$file]);
+    }
+    
 }
