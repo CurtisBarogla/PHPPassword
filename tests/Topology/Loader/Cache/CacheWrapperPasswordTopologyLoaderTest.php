@@ -16,7 +16,7 @@ use NessTest\Component\Password\PasswordTestCase;
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
 use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 use Psr\SimpleCache\CacheInterface;
-use Ness\Component\Password\Topology\Loader\CacheWrapperPasswordTopologyLoader;
+use Ness\Component\Password\Topology\Loader\Cache\CacheWrapperPasswordTopologyLoader;
 
 /**
  * CacheWrapperPasswordTopologyLoader testcase
@@ -40,7 +40,7 @@ class CacheWrapperPasswordTopologyLoaderTest extends PasswordTestCase
     }
     
     /**
-     * @see \Ness\Component\Password\Topology\Loader\CacheWrapperPasswordTopologyLoader::load()
+     * @see \Ness\Component\Password\Topology\Loader\Cache\CacheWrapperPasswordTopologyLoader::load()
      */
     public function testLoad(): void
     {
@@ -66,7 +66,7 @@ class CacheWrapperPasswordTopologyLoaderTest extends PasswordTestCase
     }
     
     /**
-     * @see \Ness\Component\Password\Topology\Loader\CacheWrapperPasswordTopologyLoader::invalidate()
+     * @see \Ness\Component\Password\Topology\Loader\Cache\CacheWrapperPasswordTopologyLoader::invalidate()
      */
     public function testInvalidate(): void
     {

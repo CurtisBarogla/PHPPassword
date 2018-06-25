@@ -10,9 +10,10 @@ declare(strict_types = 1);
  *
  */
 
-namespace Ness\Component\Password\Topology\Loader;
+namespace Ness\Component\Password\Topology\Loader\Cache;
 
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
+use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 use Psr\SimpleCache\CacheInterface;
 use Ness\Component\Password\Traits\HelperTrait;
 
@@ -75,18 +76,18 @@ class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoa
             $this->cache->set($key, $collection);
             
             return $collection;
-        } else {
-            $this->fetched[$generator][] = $key;
-            
-            return $collection;
         }
+        
+        $this->fetched[$generator][] = $key;
+        
+        return $collection;
     }
     
     /**
      * This implementation can only invalidate collection fetched from a previous call to load
      * 
      * {@inheritDoc}
-     * @see \Ness\Component\Password\Topology\Loader\CacheablePasswordTopologyLoaderInterface::invalidate()
+     * @see \Ness\Component\Password\Topology\Loader\Cache\CacheablePasswordTopologyLoaderInterface::invalidate()
      */
     public function invalidate(?string $generator): bool
     {

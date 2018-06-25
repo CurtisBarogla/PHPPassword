@@ -10,7 +10,9 @@ declare(strict_types = 1);
  *
  */
 
-namespace Ness\Component\Password\Topology\Loader;
+namespace Ness\Component\Password\Topology\Loader\Cache;
+
+use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 
 /**
  * Extend basic interface to provide invalidation of generator collections fetched from a cache
