@@ -14,6 +14,7 @@ namespace Ness\Component\Password\Topology\Loader;
 
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
 use Psr\SimpleCache\CacheInterface;
+use Ness\Component\Password\Traits\HelperTrait;
 
 /**
  * Simple wrapper around a setted PasswordTopologyLoader to cache and re-use collection already loaded
@@ -21,8 +22,10 @@ use Psr\SimpleCache\CacheInterface;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class CacheWrapperPasswordTopologyLoader implements PasswordTopologyLoaderInterface
+class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoaderInterface
 {
+    
+    use HelperTrait;
     
     /**
      * PSR-16 Cache implementation
@@ -37,6 +40,13 @@ class CacheWrapperPasswordTopologyLoader implements PasswordTopologyLoaderInterf
      * @var PasswordTopologyLoaderInterface
      */
     private $loader;
+    
+    /**
+     * Fetched keys from the cache
+     * 
+     * @var string[]
+     */
+    private $fetched;
     
     /**
      * Initialize loader
@@ -58,7 +68,7 @@ class CacheWrapperPasswordTopologyLoader implements PasswordTopologyLoaderInterf
      */
     public function load(?int $limit, string $generator): PasswordTopologyCollection
     {
-        $key = "CACHE_TOPOLOGY_LOADER_{$generator}_LIMIT_{$limit}";
+        $key = $this->interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
         if(null === $collection = $this->cache->get($key, null)) {
             $collection = $this->loader->load($limit, $generator);
             
@@ -66,8 +76,33 @@ class CacheWrapperPasswordTopologyLoader implements PasswordTopologyLoaderInterf
             
             return $collection;
         } else {
+            $this->fetched[$generator][] = $key;
+            
             return $collection;
         }
+    }
+    
+    /**
+     * This implementation can only invalidate collection fetched from a previous call to load
+     * 
+     * {@inheritDoc}
+     * @see \Ness\Component\Password\Topology\Loader\CacheablePasswordTopologyLoaderInterface::invalidate()
+     */
+    public function invalidate(?string $generator): bool
+    {
+        if(null === $this->fetched || null !== $generator && !isset($this->fetched[$generator]))
+            return true;
+        
+        $toInvalidate = [];
+        $toInvalidate = (null === $generator) ? \array_merge_recursive($toInvalidate, ...\array_values($this->fetched)) : $this->fetched[$generator];
+        
+        $invalidation = $this->cache->deleteMultiple($toInvalidate);
+        if(null !== $generator)
+            unset($this->fetched[$generator]);
+        else
+            $this->fetched = null;
+        
+        return $invalidation;
     }
     
 }
