@@ -12,6 +12,8 @@ declare(strict_types = 1);
 
 namespace Ness\Component\Password\Validation\Rule;
 
+use Ness\Component\Password\Traits\HelperTrait;
+
 /**
  * Common to all password rules
  * 
@@ -20,6 +22,10 @@ namespace Ness\Component\Password\Validation\Rule;
  */
 abstract class AbstractPasswordRule implements PasswordRuleInterface
 {
+    
+    use HelperTrait {
+        HelperTrait::interpolate as toInterpolate;    
+    }
     
     /**
      * Error message
@@ -58,9 +64,7 @@ abstract class AbstractPasswordRule implements PasswordRuleInterface
      */
     protected function interpolate(array $values): void
     {
-        $this->error = \str_replace(\array_map(function(string $key): string {
-            return "{:{$key}:}";
-        }, \array_keys($values)), $values, $this->error);
+        $this->error = $this->toInterpolate($this->error, $values);
     }
     
 }
