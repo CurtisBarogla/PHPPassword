@@ -23,7 +23,7 @@ use Ness\Component\Password\Traits\HelperTrait;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoaderInterface
+class CacheWrapperPasswordTopologyLoader extends AbstractCacheablePasswordTopologyLoader
 {
     
     use HelperTrait;
@@ -41,13 +41,6 @@ class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoa
      * @var PasswordTopologyLoaderInterface
      */
     private $loader;
-    
-    /**
-     * Fetched keys from the cache
-     * 
-     * @var string[]
-     */
-    private $fetched;
     
     /**
      * Initialize loader
@@ -70,7 +63,7 @@ class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoa
     public function load(?int $limit, string $generator): PasswordTopologyCollection
     {
         $key = $this->interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
-        if(null === $collection = $this->cache->get($key, null)) {
+        if(null === $collection = $this->cache->get($key)) {
             $collection = $this->loader->load($limit, $generator);
             
             $this->cache->set($key, $collection);
@@ -78,7 +71,7 @@ class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoa
             return $collection;
         }
         
-        $this->fetched[$generator][] = $key;
+        $this->setFetched($generator, $key);
         
         return $collection;
     }
@@ -91,19 +84,7 @@ class CacheWrapperPasswordTopologyLoader implements CacheablePasswordTopologyLoa
      */
     public function invalidate(?string $generator): bool
     {
-        if(null === $this->fetched || null !== $generator && !isset($this->fetched[$generator]))
-            return true;
-        
-        $toInvalidate = [];
-        $toInvalidate = (null === $generator) ? \array_merge_recursive($toInvalidate, ...\array_values($this->fetched)) : $this->fetched[$generator];
-        
-        $invalidation = $this->cache->deleteMultiple($toInvalidate);
-        if(null !== $generator)
-            unset($this->fetched[$generator]);
-        else
-            $this->fetched = null;
-        
-        return $invalidation;
+        return (null !== $keys = $this->getFetched($generator)) ? $this->cache->deleteMultiple($keys) : true;
     }
     
 }

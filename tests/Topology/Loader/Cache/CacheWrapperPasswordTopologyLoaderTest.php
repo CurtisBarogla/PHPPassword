@@ -10,7 +10,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace NessTest\Component\Password\Topology\Loader;
+namespace NessTest\Component\Password\Topology\Loader\Cache;
 
 use NessTest\Component\Password\PasswordTestCase;
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
