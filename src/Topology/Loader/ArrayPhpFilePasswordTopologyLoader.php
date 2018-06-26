@@ -51,16 +51,8 @@ class ArrayPhpFilePasswordTopologyLoader implements PasswordTopologyLoaderInterf
     {
         foreach ($definitions as $definition) {
             if(!\is_array($definition)) {
-                try {
-                    $definition = \Closure::bind(function(string $file): array {
-                        if(!\is_file($file))
-                            throw new \LogicException("This file '{$file}' does not exist");
-                            
-                            return include $file;
-                    }, null)($definition);                    
-                } catch (\TypeError $e) {
-                    throw new \LogicException("This file '{$definition}' MUST return an array");
-                }
+                if(!\is_file($definition))
+                    throw new \LogicException("This file '{$definition}' does not exist");
             }
             
             $this->definitions[] = $definition;
@@ -75,6 +67,15 @@ class ArrayPhpFilePasswordTopologyLoader implements PasswordTopologyLoaderInterf
     {
         $collection = new PasswordTopologyCollection();
         foreach ($this->definitions as $definitions) {
+            if(!\is_array($definitions)) {
+                try {
+                    $definitions = \Closure::bind(function(string $file): array {
+                        return include $file;
+                    }, null)($definitions);
+                } catch (\TypeError $e) {
+                    throw new \LogicException("This file '{$definitions}' MUST return an array");
+                }
+            }
             foreach ($definitions as $topologyGenerator => $topologies) {
                 if($topologyGenerator !== $generator)
                     continue;

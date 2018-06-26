@@ -71,6 +71,7 @@ class ArrayPhpFilePasswordTopologyLoaderTest extends PasswordTopologyTestCase
         $this->expectExceptionMessage("This file '{$file}' MUST return an array");
         
         $loader = new ArrayPhpFilePasswordTopologyLoader([$file]);
+        $loader->load(null, "Foo");
     }
     
 }
