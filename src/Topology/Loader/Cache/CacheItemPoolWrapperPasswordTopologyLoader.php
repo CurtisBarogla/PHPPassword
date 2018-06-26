@@ -74,6 +74,8 @@ class CacheItemPoolWrapperPasswordTopologyLoader extends AbstractCacheablePasswo
             
             $item->set($collection);
             
+            $this->pool->save($item);
+            
             return $collection;
         }
         

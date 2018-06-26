@@ -49,6 +49,7 @@ class CacheItemPoolWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $item->expects($this->once())->method("get")->will($this->returnValue($collection));
         
         $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
+        $pool->expects($this->once())->method("save")->with($item);
         
         $wrapper = new CacheItemPoolWrapperPasswordTopologyLoader($pool, $loader);
         
@@ -74,6 +75,7 @@ class CacheItemPoolWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $item->expects($this->once())->method("get")->will($this->returnValue($collection));
         
         $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
+        $pool->expects($this->once())->method("save")->with($item);
         
         $wrapper = new CacheItemPoolWrapperPasswordTopologyLoader($pool, $loader);
         
