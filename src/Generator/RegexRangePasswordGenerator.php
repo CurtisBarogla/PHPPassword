@@ -17,7 +17,8 @@ use Ness\Component\Password\RegexRangeAwareInterface;
 use Ness\Component\Password\Traits\RegexRangeAwareTrait;
 
 /**
- * Generate password from a setted RegexRange
+ * Generate password from a setted RegexRange.
+ * This implementation does not take in account min max values setted for each range
  * 
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *

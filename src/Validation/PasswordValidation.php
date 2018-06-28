@@ -35,7 +35,7 @@ class PasswordValidation implements PasswordValidationInterface
     /**
      * All errors from the rules if the password is not valid
      * 
-     * @var array[string]|null
+     * @var string[]|null
      */
     private $errors = null;
     
@@ -58,17 +58,14 @@ class PasswordValidation implements PasswordValidationInterface
     {
         if(null === $this->rules)
             return true;
-        
-        $error = false;
-        
+
         foreach ($this->rules as $rule) {
             if(!$rule->comply($password)) {
-                $error = true;
                 $this->errors[] = $rule->getError();
             }
         }
             
-        return !$error;
+        return null === $this->errors;
     }
 
     /**

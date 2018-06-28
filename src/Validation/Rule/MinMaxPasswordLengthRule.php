@@ -61,10 +61,10 @@ class MinMaxPasswordLengthRule extends AbstractPasswordRule
      */
     public function comply(Password $password): bool
     {
-        $count = \count($password);
+        $length = \count($password);
         
-        if($count < $this->min || $count > $this->max) {
-            $this->interpolate(["min" => $this->min, "max" => $this->max, "current" => $count]);
+        if($length < $this->min || $length > $this->max) {
+            $this->interpolate(["min" => $this->min, "max" => $this->max, "current" => $length]);
             
             return false;
         }

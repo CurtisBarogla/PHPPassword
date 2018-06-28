@@ -64,18 +64,18 @@ class RegexRangePasswordRule extends AbstractPasswordRule implements RegexRangeA
     {
         $range = $this->getRange();
         $result = $range->preg($password->get());
-        $count = \count($range);
+        $rangeCount = \count($range);
         
         if(null === $this->required)
-            $this->required = $count;
+            $this->required = $rangeCount;
         else {
-            if($count < $this->required) {
-                throw new \LogicException("Setted RegexRange has '{$count}' ranges registered and rule is requiring '{$this->required}'");
+            if($rangeCount < $this->required) {
+                throw new \LogicException("Setted RegexRange has '{$rangeCount}' ranges registered and rule is requiring '{$this->required}'");
             }
         }
         
         if(null === $result || $result < $this->required) {
-            $this->interpolate(["required" => $this->required, "ranges" => $count]);
+            $this->interpolate(["required" => $this->required, "ranges" => $rangeCount]);
             foreach ($range->getRanges() as $identifier => $range) {
                 $this->interpolate(["{$identifier}_min" => (string)$range["min"], "{$identifier}_max" => (string)$range["max"]]);
             }

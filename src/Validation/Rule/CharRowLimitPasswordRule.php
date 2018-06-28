@@ -52,10 +52,10 @@ class CharRowLimitPasswordRule extends AbstractPasswordRule
     public function comply(Password $password): bool
     {
         foreach ($exploded = $password->getExploded() as $index => $character) {
-            if($index < ($limit = $this->limit) )
+            if($index < $this->limit)
                 continue;
             $same = 0;
-            for ($i = $limit; $i > 0; $i--) {
+            for ($i = $this->limit; $i > 0; $i--) {
                 if($exploded[$index] === $exploded[$index - $i])
                     $same++;
                 
