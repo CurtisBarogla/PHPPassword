@@ -25,25 +25,18 @@ class RegexRange implements \Countable
 {
     
     /**
-     * Map representing the regexes
+     * Map representing the characters list from ranges
      * 
      * @var array[array]
      */
     private $map = [];
     
     /**
-     * Formatted regex
+     * All ranges characters declared into all ranges
      * 
      * @var string
      */
     private $global = "";
-    
-    /**
-     * Add to formated regex for preg
-     * 
-     * @var string
-     */
-    private $postBuild = "";
     
     /**
      * Hash table referencing what a character is given the ranges
@@ -60,7 +53,7 @@ class RegexRange implements \Countable
     private $table = [];
     
     /**
-     * Regex range identifier
+     * Range identifier
      * 
      * @var string
      */
@@ -83,10 +76,10 @@ class RegexRange implements \Countable
         if(empty($this->map))
             throw new \LogicException("Impossible to get the identifier of an empty RegexRange");
 
-        return $this->identifier = \implode("&", \array_map(function(array $range, string $identifier): string {
+        return $this->identifier = sha1(\implode("&", \array_map(function(array $range, string $identifier): string {
             $max = $range["max"] ?? "null";
-            return "{$identifier}@{$range["regex"]}:{$range["min"]}-{$max}";       
-        }, $this->map, \array_keys($this->map)));
+            return "{$identifier}@{$range["list"]}:{$range["min"]}-{$max}";       
+        }, $this->map, \array_keys($this->map))));
     }
     
     /**
@@ -134,18 +127,22 @@ class RegexRange implements \Countable
         if(null !== $max && $min >= $max) 
             throw new \LogicException("Min cannot be greater or equal than max on '{$identifier}' range");
         
-        foreach ($ranges as $range) {
-            $exploded = \explode("-", $range);
-            foreach (mb_range($exploded[0], $exploded[1]) as $character)
-                $this->hash[$character] = $identifier;
-        }
-        
         \sort($ranges);
-        
-        $ranges = \implode("", $ranges);
-        $this->global .= "(?=.*[{$ranges}]{0,})";
-        $this->postBuild .= $ranges;
-        $this->map[$identifier]["regex"] = "[{$ranges}]+";
+            
+        foreach ($ranges as $index => $range) {
+            if(\mb_strlen($range) !== 3 || \mb_strpos($range, '-', 1) !== 1)
+                throw new \LogicException("Range '{$range}' on '{$identifier}' identifier MUST respect pattern : 'char_start'-'char-end'");
+            $exploded = ($range[0] === '-') ? ['-', \mb_substr($range, \strpos($range, '-') - 1)] : \explode('-', $range, 2);
+            foreach (mb_range($exploded[0], $exploded[1]) as $character) {
+                if(isset($this->hash[$character]))
+                    throw new \LogicException("This character '{$character}' has been already registered under '{$this->hash[$character]}' identifier");
+                $this->hash[$character] = $identifier;
+            }
+        }
+
+        $this->global .= $this->map[$identifier]["list"] = \preg_quote(\implode("", \array_keys(\array_filter($this->hash, function(string $localIdentifier) use ($identifier): bool {
+            return $localIdentifier === $identifier;
+        }))));
         $this->map[$identifier]["min"] = $min ?? 1;
         $this->map[$identifier]["max"] = $max;
         
@@ -168,18 +165,19 @@ class RegexRange implements \Countable
             return $this->table[$string];
 
         $global = null;
-        if(!$this->validate("^{$this->global}[{$this->postBuild}]+$", $string, $global))
+        if(!$this->validate("^[{$this->global}]+$", $string, $global))
             return $this->table[$string] = null;
-
+            
         $total = \count($this);
         foreach ($this->map as $identifier => $map) {
             $matches = null;
-            if(!$this->validate($map["regex"], $global[0], $matches, true)) {
+            if(!$this->validate("[{$map["list"]}]+", $global[0], $matches, true)) {
                 $total--;
                 continue;
             }
 
             $result = \mb_strlen(\implode("", $matches[0]));
+
             if( ($result < $map["min"]) || (null !== $map["max"] && $result > $map["max"]) )
                 $total--;
         }
