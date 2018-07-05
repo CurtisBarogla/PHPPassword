@@ -59,6 +59,9 @@ class PasswordValidation implements PasswordValidationInterface
         if(null === $this->rules)
             return true;
 
+        // clear if a call has been previously made
+        $this->errors = null;
+            
         foreach ($this->rules as $rule) {
             if(!$rule->comply($password)) {
                 $this->errors[] = $rule->getError();
