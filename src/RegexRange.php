@@ -60,32 +60,33 @@ class RegexRange implements \Countable
     private $table = [];
     
     /**
-     * Builded over registered ranges
+     * Regex range identifier
      * 
      * @var string
      */
-    private $identifier = "";
-    
-    /**
-     * Initialize the regex range
-     * 
-     * @param string $identifier
-     *   Identify the range
-     */
-    public function __construct(string $identifier)
-    {
-        $this->identifier = $identifier;
-    }
-    
+    private $identifier;
+
     /**
      * Identify the regex range.
      * 
      * @return string
      *   Regex range identifier
+     *   
+     * @throws \LogicException
+     *   When no range has been setted
      */
     public function getIdentifier(): string
     {
-        return $this->identifier;
+        if(null !== $this->identifier)
+            return $this->identifier;
+        
+        if(empty($this->map))
+            throw new \LogicException("Impossible to get the identifier of an empty RegexRange");
+
+        return $this->identifier = \implode("&", \array_map(function(array $range, string $identifier): string {
+            $max = $range["max"] ?? "null";
+            return "{$identifier}@{$range["regex"]}:{$range["min"]}-{$max}";       
+        }, $this->map, \array_keys($this->map)));
     }
     
     /**
@@ -127,6 +128,9 @@ class RegexRange implements \Countable
      */
     public function add(string $identifier, array $ranges, ?int $min = null, ?int $max = null): void
     {
+        if(isset($this->map[$identifier]))
+            throw new \LogicException("This identifier '{$identifier}' has been already setted into '{$this->getIdentifier()}' regex range");
+        
         if(null !== $max && $min >= $max) 
             throw new \LogicException("Min cannot be greater or equal than max on '{$identifier}' range");
         
@@ -136,12 +140,16 @@ class RegexRange implements \Countable
                 $this->hash[$character] = $identifier;
         }
         
+        \sort($ranges);
+        
         $ranges = \implode("", $ranges);
         $this->global .= "(?=.*[{$ranges}]{0,})";
         $this->postBuild .= $ranges;
         $this->map[$identifier]["regex"] = "[{$ranges}]+";
         $this->map[$identifier]["min"] = $min ?? 1;
         $this->map[$identifier]["max"] = $max;
+        
+        \ksort($this->map);
     }
     
     /**

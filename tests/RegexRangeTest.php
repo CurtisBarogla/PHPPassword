@@ -30,14 +30,13 @@ class RegexRangeTest extends PasswordTestCase
      */
     public function testGetIdentifier(): void
     {
-        $range = new RegexRange("Foo");
+        $range = new RegexRange();
+
+        $range->add("Foo", ["Foo-Bar", "Bar-Foo"], null, null);
+        $range->add("Bar", ["Bar-Foo", "Moz-Poz"], null, null);
         
-        $this->assertSame("Foo", $range->getIdentifier());
-        
-        $range->add("Foo", ["Foo-Bar"], null, null);
-        $range->add("Bar", ["Bar-Foo"], null, null);
-        
-        $this->assertSame("Foo", $range->getIdentifier());
+        $this->assertSame("Bar@[Bar-FooMoz-Poz]+:1-null&Foo@[Bar-FooFoo-Bar]+:1-null", $range->getIdentifier());
+        $this->assertSame("Bar@[Bar-FooMoz-Poz]+:1-null&Foo@[Bar-FooFoo-Bar]+:1-null", $range->getIdentifier());
     }
     
     /**
@@ -50,8 +49,8 @@ class RegexRangeTest extends PasswordTestCase
         $range->add("bar", ["A-Z"], 4, null);
         
         $this->assertSame([
-            "foo" => ["regex" => "[a-za-a]+", "min" => 1, "max" => 4],
-            "bar" => ["regex" => "[A-Z]+", "min" => 4, "max" => null]
+            "bar" => ["regex" => "[A-Z]+", "min" => 4, "max" => null],
+            "foo" => ["regex" => "[a-aa-z]+", "min" => 1, "max" => 4]
         ], $range->getRanges());
     }
     
@@ -137,6 +136,34 @@ class RegexRangeTest extends PasswordTestCase
     }
     
                     /**_____EXCEPTIONS_____**/
+    
+    /**
+     * @see \Ness\Component\Password\RegexRange::getIdentifier()
+     */
+    public function testExceptionGetIdentifierWhenNoRangeHasBeenSetted(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage("Impossible to get the identifier of an empty RegexRange");
+        
+        $range = new RegexRange();
+        
+        $range->getIdentifier();
+    }
+    
+    /**
+     * @see \Ness\Component\Password\RegexRange::add()
+     */
+    public function testExceptionAddWhenAnIdentifierIsAlreadyRegisteredIntoTheRegexRange(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage("This identifier 'foo' has been already setted into 'bar@[Bar-Foo]+:1-null&foo@[Foo-Bar]+:1-null' regex range");
+        
+        $range = new RegexRange();
+        
+        $range->add("foo", ["Foo-Bar"]);
+        $range->add("bar", ["Bar-Foo"]);
+        $range->add("foo", ["Foo-Bar"]);
+    }
     
     /**
      * @see \Ness\Component\Password\RegexRange::add()
