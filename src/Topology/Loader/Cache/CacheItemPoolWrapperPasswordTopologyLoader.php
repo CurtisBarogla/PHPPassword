@@ -16,8 +16,8 @@ use Ness\Component\Password\Topology\PasswordTopologyCollection;
 use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Cache\TagInterop\TaggableCacheItemPoolInterface;
-use Ness\Component\Password\Traits\HelperTrait;
 use Cache\TagInterop\TaggableCacheItemInterface;
+use function Ness\Component\Password\interpolate;
 
 /**
  * Simple wrapper around a setted PasswordTopologyLoader to cache and re-use collection already loaded over a PSR6 cache implementation.
@@ -28,8 +28,6 @@ use Cache\TagInterop\TaggableCacheItemInterface;
  */
 class CacheItemPoolWrapperPasswordTopologyLoader extends AbstractCacheablePasswordTopologyLoader
 {
-    
-    use HelperTrait;
     
     /**
      * PSR6 Cache component
@@ -65,7 +63,7 @@ class CacheItemPoolWrapperPasswordTopologyLoader extends AbstractCacheablePasswo
      */
     public function load(?int $limit, string $generator): PasswordTopologyCollection
     {
-        $key = $this->interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
+        $key = interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
         if( !($item = $this->pool->getItem($key))->isHit() ) {
             $collection = $this->loader->load($limit, $generator); 
             

@@ -15,7 +15,7 @@ namespace Ness\Component\Password\Topology\Loader\Cache;
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
 use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
 use Psr\SimpleCache\CacheInterface;
-use Ness\Component\Password\Traits\HelperTrait;
+use function Ness\Component\Password\interpolate;
 
 /**
  * Simple wrapper around a setted PasswordTopologyLoader to cache and re-use collection already loaded
@@ -25,8 +25,6 @@ use Ness\Component\Password\Traits\HelperTrait;
  */
 class CacheWrapperPasswordTopologyLoader extends AbstractCacheablePasswordTopologyLoader
 {
-    
-    use HelperTrait;
     
     /**
      * PSR-16 Cache implementation
@@ -62,7 +60,7 @@ class CacheWrapperPasswordTopologyLoader extends AbstractCacheablePasswordTopolo
      */
     public function load(?int $limit, string $generator): PasswordTopologyCollection
     {
-        $key = $this->interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
+        $key = interpolate(self::CACHE_KEY_PATTERN, ["generator" => $generator, "limit" => $limit]);
         if(null === $collection = $this->cache->get($key)) {
             $collection = $this->loader->load($limit, $generator);
             

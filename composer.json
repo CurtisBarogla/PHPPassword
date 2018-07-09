@@ -13,7 +13,7 @@
 	"homepage" : "https://github.com/CurtisBarogla/Password",
 	"autoload" : {
 		"files" : [
-			"src/External/functions.php"
+			"src/functions.php"
 		],
 		"psr-4" : {
 			"Ness\\Component\\Password\\" : "./src"

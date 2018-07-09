@@ -12,7 +12,7 @@ declare(strict_types = 1);
 
 namespace Ness\Component\Password;
 
-use function Ness\Component\Password\External\mb_range;
+use function Ness\Component\Password\mb_range;
 
 /**
  * Simple wrapper around regexes to compile multiple ranges of characters regrouped over an unique identifier.
