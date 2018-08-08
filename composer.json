@@ -41,7 +41,9 @@
 		"security",
 		"generator",
 		"bcrypt",
-		"argon"
+		"argon",
+		"rotation",
+		"policy"
 	],
 	"minimum-stability" : "stable"
 }
