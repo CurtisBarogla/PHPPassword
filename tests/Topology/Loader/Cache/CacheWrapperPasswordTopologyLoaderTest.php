@@ -49,13 +49,13 @@ class CacheWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $loader->expects($this->exactly(2))->method("load")->withConsecutive([null, "Foo"], [3, "Foo"])->will($this->returnValue($collection));
         $cache = $this->getMockBuilder(CacheInterface::class)->getMock();
         $cache->expects($this->exactly(3))->method("get")->withConsecutive(
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_"], 
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"], 
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_"], 
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"], 
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])
         ->will($this->onConsecutiveCalls(null, null, $collection));
         $cache->expects($this->exactly(2))->method("set")->withConsecutive(
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", $collection],
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3", $collection])
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", $collection],
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3", $collection])
         ->will($this->returnValue(true));
         
         $wrapper = new CacheWrapperPasswordTopologyLoader($cache, $loader);
@@ -73,14 +73,14 @@ class CacheWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $collection = $this->getMockBuilder(PasswordTopologyCollection::class)->disableOriginalConstructor()->getMock();
         $cache = $this->getMockBuilder(CacheInterface::class)->getMock();
         $cache->expects($this->exactly(6))->method("get")->withConsecutive(
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_"],
-            ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"],
-            ["CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"]
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_"],
+            ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"],
+            ["NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"]
         )->will($this->returnValue($collection));
         $cache->expects($this->exactly(3))->method("deleteMultiple")->withConsecutive(
-            [ ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3", "CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"] ],
-            [ ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"] ],
-            [ ["CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"] ]
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3", "NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"] ],
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"] ],
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_5"] ]
         )->will($this->returnValue(true));
         
         $wrapper = new CacheWrapperPasswordTopologyLoader($cache, $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock());

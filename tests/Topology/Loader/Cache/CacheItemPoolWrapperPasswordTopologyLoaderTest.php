@@ -48,7 +48,7 @@ class CacheItemPoolWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $item->expects($this->once())->method("set")->with($collection);
         $item->expects($this->once())->method("get")->will($this->returnValue($collection));
         
-        $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
+        $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
         $pool->expects($this->once())->method("save")->with($item);
         
         $wrapper = new CacheItemPoolWrapperPasswordTopologyLoader($pool, $loader);
@@ -74,7 +74,7 @@ class CacheItemPoolWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $item->expects($this->once())->method("setTags")->with(["PASSWORD_TOPOLOGY", "PASSWORD_TOPOLOGY_Foo"]);
         $item->expects($this->once())->method("get")->will($this->returnValue($collection));
         
-        $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
+        $pool->expects($this->exactly(2))->method("getItem")->withConsecutive(["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_3"])->will($this->returnValue($item));
         $pool->expects($this->once())->method("save")->with($item);
         
         $wrapper = new CacheItemPoolWrapperPasswordTopologyLoader($pool, $loader);
@@ -97,14 +97,14 @@ class CacheItemPoolWrapperPasswordTopologyLoaderTest extends PasswordTestCase
         $item->expects($this->exactly(6))->method("isHit")->will($this->returnValue(true));
         $item->expects($this->exactly(6))->method("get")->will($this->returnValue($collection));
         $pool->expects($this->exactly(6))->method("getItem")->withConsecutive(
-            [ "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_" ],
-            [ "CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3" ],
-            [ "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5" ]
+            [ "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_" ],
+            [ "NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3" ],
+            [ "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5" ]
         )->will($this->returnValue($item));
         $pool->expects($this->exactly(3))->method("deleteItems")->withConsecutive(
-            [ ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5", "CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3"] ],
-            [ ["CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5"] ],
-            [ ["CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3"] ]
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5", "NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3"] ],
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_", "NESS_CACHE_TOPOLOGY_LOADER_Foo_LIMIT_5"] ],
+            [ ["NESS_CACHE_TOPOLOGY_LOADER_Bar_LIMIT_3"] ]
         )->will($this->returnValue(true));
         
         $wrapper = new CacheItemPoolWrapperPasswordTopologyLoader($pool, $loader);

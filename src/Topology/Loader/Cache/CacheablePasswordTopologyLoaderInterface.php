@@ -28,7 +28,7 @@ interface CacheablePasswordTopologyLoaderInterface extends PasswordTopologyLoade
      * 
      * @var string
      */
-    public const CACHE_KEY_PATTERN = "CACHE_TOPOLOGY_LOADER_{:generator:}_LIMIT_{:limit:}";
+    public const CACHE_KEY_PATTERN = "NESS_CACHE_TOPOLOGY_LOADER_{:generator:}_LIMIT_{:limit:}";
     
     /**
      * Try to invalidate collection from generator fetched from a cache component
