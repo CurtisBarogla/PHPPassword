@@ -142,7 +142,7 @@ class RegexRange implements \Countable
 
         $this->global .= $this->map[$identifier]["list"] = \preg_quote(\implode("", \array_keys(\array_filter($this->hash, function(string $localIdentifier) use ($identifier): bool {
             return $localIdentifier === $identifier;
-        }))));
+        }))), '#');
         $this->map[$identifier]["min"] = $min ?? 1;
         $this->map[$identifier]["max"] = $max;
         
