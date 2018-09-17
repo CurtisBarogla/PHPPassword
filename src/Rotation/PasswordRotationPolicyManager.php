@@ -74,8 +74,6 @@ class PasswordRotationPolicyManager implements PasswordRotationPolicyManagerInte
         foreach ($this->policies as $policy) {
             if($policy->support($user) && $policy->apply($rotation))
                 return true;
-            
-            continue;
         }
         
         return false;
