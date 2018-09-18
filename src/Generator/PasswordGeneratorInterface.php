@@ -15,7 +15,7 @@ namespace Ness\Component\Password\Generator;
 use Ness\Component\Password\Password;
 
 /**
- * Generate secured password
+ * Generate secure password
  * 
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *

@@ -15,7 +15,7 @@ namespace Ness\Component\Password\Generator;
 use Ness\Component\Password\Password;
 
 /**
- * Simply generate a password use random_bytes function
+ * Simply generate a password using random_bytes function
  * 
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
