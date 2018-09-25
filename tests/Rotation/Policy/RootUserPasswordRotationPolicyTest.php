@@ -29,6 +29,16 @@ class RootUserPasswordRotationPolicyTest extends PasswordTestCase
 {
     
     /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUpBeforeClass()
+     */
+    public static function setUpBeforeClass(): void
+    {
+        if(!\interface_exists("Ness\Component\Authentication\User\AuthenticatedUserInterface"))
+            self::markTestSkipped("Ness/Authentication component not installed. Test skipped");
+    }
+    
+    /**
      * @see \Ness\Component\Password\Rotation\Policy\RootUserPasswordRotationPolicy::apply()
      */
     public function testApply(): void
