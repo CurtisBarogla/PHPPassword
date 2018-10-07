@@ -46,7 +46,8 @@ function interpolate(string $base, array $values): string
  * 
  * @see https://gist.github.com/rodneyrehm/1306118
  */
-function mb_range($start, $end) {
+function mb_range(string $start, string $end): array 
+{
     /*
     // if start and end are the same, well, there's nothing to do
     if ($start == $end) {
