@@ -132,7 +132,7 @@ class RegexRange implements \Countable
         foreach ($ranges as $index => $range) {
             if(\mb_strlen($range) !== 3 || \mb_strpos($range, '-', 1) !== 1)
                 throw new \LogicException("Range '{$range}' on '{$identifier}' identifier MUST respect pattern : 'char_start'-'char-end'");
-            $exploded = ($range[0] === '-') ? ['-', \mb_substr($range, \strpos($range, '-') - 1)] : \explode('-', $range, 2);
+            $exploded = ($range[0] === '-') ? ['-', \mb_substr($range, \mb_strpos($range, '-') - 1)] : \explode('-', $range, 2);
             foreach (mb_range($exploded[0], $exploded[1]) as $character) {
                 if(isset($this->hash[$character]))
                     throw new \LogicException("This character '{$character}' has been already registered under '{$this->hash[$character]}' identifier");
