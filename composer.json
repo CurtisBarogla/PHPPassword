@@ -33,7 +33,7 @@
 		"cache/tag-interop" : "A cache library supporting tagging",
 		"ness/cache" : "To use cache mechanism",
 		"ness/user" : "To use password rotation policies on user",
-		"ness/authentication" : "To use password rotation policies on more specificated user"
+		"ness/authentication" : "To use password rotation policies on more specific user"
 	},
 	"keywords" : [
 		"password",
@@ -43,7 +43,10 @@
 		"bcrypt",
 		"argon",
 		"rotation",
-		"policy"
+		"policy",
+		"password-topology",
+		"password-rules",
+		"extendables"
 	],
 	"minimum-stability" : "stable"
 }
