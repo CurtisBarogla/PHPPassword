@@ -20,7 +20,7 @@ use Ness\Component\User\UserInterface;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class LastPasswordRotationProviderCollection implements LastPasswordRotationProviderInterface
+class ChainLastPasswordRotationProvider implements LastPasswordRotationProviderInterface
 {
     
     /**

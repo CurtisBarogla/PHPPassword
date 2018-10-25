@@ -14,7 +14,7 @@ namespace NessTest\Component\Password\Rotation\Provider;
 
 use NessTest\Component\Password\PasswordTestCase;
 use Ness\Component\Password\Rotation\Provider\LastPasswordRotationProviderInterface;
-use Ness\Component\Password\Rotation\Provider\LastPasswordRotationProviderCollection;
+use Ness\Component\Password\Rotation\Provider\ChainLastPasswordRotationProvider;
 use Ness\Component\User\UserInterface;
 
 /**
@@ -25,29 +25,29 @@ use Ness\Component\User\UserInterface;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class LastPasswordRotationProviderCollectionTest extends PasswordTestCase
+class ChainLastPasswordRotationProviderTest extends PasswordTestCase
 {
     
     /**
-     * @see \Ness\Component\Password\Rotation\Provider\LastPasswordRotationProviderCollection::addProvider()
+     * @see \Ness\Component\Password\Rotation\Provider\ChainLastPasswordRotationProvider::addProvider()
      */
     public function testAddProvider(): void
     {
         $provider = $this->getMockBuilder(LastPasswordRotationProviderInterface::class)->getMock();
         
-        $collection = new LastPasswordRotationProviderCollection();
+        $collection = new ChainLastPasswordRotationProvider();
         
         $this->assertNull($collection->addProvider($provider));
     }
     
     /**
-     * @see \Ness\Component\Password\Rotation\Provider\LastPasswordRotationProviderCollection::provide()
+     * @see \Ness\Component\Password\Rotation\Provider\ChainLastPasswordRotationProvider::provide()
      */
     public function testProvide(): void
     {
         $rotation = new \DateTimeImmutable("NOW - 42 days");
         
-        $collection = new LastPasswordRotationProviderCollection();
+        $collection = new ChainLastPasswordRotationProvider();
         
         $this->assertNull($collection->provide($this->getMockBuilder(UserInterface::class)->getMock()));
         
