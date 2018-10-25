@@ -14,7 +14,7 @@ namespace NessTest\Component\Password\Topology\Loader;
 
 use NessTest\Component\Password\Topology\PasswordTopologyTestCase;
 use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderInterface;
-use Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderCollection;
+use Ness\Component\Password\Topology\Loader\ChainPasswordTopologyLoader;
 use Ness\Component\Password\Topology\PasswordTopologyCollection;
 use Ness\Component\Password\Topology\PasswordTopology;
 
@@ -26,22 +26,22 @@ use Ness\Component\Password\Topology\PasswordTopology;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class PasswordTopologyLoaderCollectionTest extends PasswordTopologyTestCase
+class ChainPasswordTopologyLoaderTest extends PasswordTopologyTestCase
 {
     
     /**
-     * @see \Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderCollection::addLoader()
+     * @see \Ness\Component\Password\Topology\Loader\ChainPasswordTopologyLoader::addLoader()
      */
     public function testAddLoader(): void
     {
         $loader = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         
-        $collection = new PasswordTopologyLoaderCollection($loader);
+        $collection = new ChainPasswordTopologyLoader($loader);
         $this->assertNull($collection->addLoader($loader));
     }
     
     /**
-     * @see \Ness\Component\Password\Topology\Loader\PasswordTopologyLoaderCollection::load()
+     * @see \Ness\Component\Password\Topology\Loader\ChainPasswordTopologyLoader::load()
      */
     public function testLoad(): void
     {
@@ -57,7 +57,7 @@ class PasswordTopologyLoaderCollectionTest extends PasswordTopologyTestCase
         $added = $this->getMockBuilder(PasswordTopologyLoaderInterface::class)->getMock();
         $added->expects($this->once())->method("load")->with(3, "Foo")->will($this->returnValue($topologyCollection2));
         
-        $collection = new PasswordTopologyLoaderCollection($default);
+        $collection = new ChainPasswordTopologyLoader($default);
         $collection->addLoader($added);
         $collection = $collection->load(3, "Foo");
         

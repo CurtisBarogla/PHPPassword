@@ -20,7 +20,7 @@ use Ness\Component\Password\Topology\PasswordTopologyCollection;
  * @author CurtisBarogla <curtis_barogla@outlook.fr>
  *
  */
-class PasswordTopologyLoaderCollection implements PasswordTopologyLoaderInterface
+class ChainPasswordTopologyLoader implements PasswordTopologyLoaderInterface
 {
     
     /**
