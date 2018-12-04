@@ -1,5 +1,3 @@
 # Password component
 
-Far from being finished :)
-
-Password component
+Not maintained anymore - See 2.0 Version
